@@ -1,11 +1,13 @@
 import React from "react";
 import { GoTrash } from "react-icons/go";
 import HomePage from "./components/HomePage";
+import ContactUs from "./components/ContactUs";
 
 const App = () => {
   return (
     <>
-      <HomePage  /> 
+     {/*<HomePage/> */} 
+      <ContactUs />
     </>
   );
 };
