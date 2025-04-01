@@ -20,10 +20,7 @@ const Navbar = () => {
           <button className="cursor-pointer h-8 w-auto px-5  border-solid border-1 border-gray-300 rounded-xl hover:border-gray-700 ease-in-out transition bg-[rgb(13,184,117)]">
             Home
           </button>
-          <PiDotOutlineFill className='h-8 text-[rgb(172,215,156)]' />
-          <button className="cursor-pointer h-8 w-auto px-5  border-solid border-1 border-gray-300 rounded-xl hover:border-gray-700 ease-in-out transition">
-            About us
-          </button>
+          
           <PiDotOutlineFill className='h-8 text-[rgb(172,215,156)]' />
           <button className="cursor-pointer h-8 w-auto px-5  border-solid border-1 border-gray-300 rounded-xl hover:border-gray-700 ease-in-out transition">
             Join ReEarth Now

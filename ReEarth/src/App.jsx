@@ -2,12 +2,14 @@ import React from "react";
 import { GoTrash } from "react-icons/go";
 import HomePage from "./components/HomePage";
 import ContactUs from "./components/ContactUs";
+import JoinUs from "./components/JoinUs";
 
 const App = () => {
   return (
     <>
      {/*<HomePage/> */} 
-      <ContactUs />
+      {/*<ContactUs />*/}
+      {/**/}<JoinUs />
     </>
   );
 };
