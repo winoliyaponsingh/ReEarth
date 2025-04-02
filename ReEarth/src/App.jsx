@@ -3,13 +3,31 @@ import { GoTrash } from "react-icons/go";
 import HomePage from "./components/HomePage";
 import ContactUs from "./components/ContactUs";
 import JoinUs from "./components/JoinUs";
+import UserHomePage from "./components/UserHomePage";
+import VendorHomePage from "./components/VendorHomePage";
+import AdminHomePage from "./components/AdminHomePage";
+import NGOHomePage from "./components/NGOHomePage";
+import { UserUploadTrash } from "./components/UserUploadTrash";
+import { VendorUploadProfile } from "./components/VendorUploadProfile";
+import { NGOUploadProfile } from "./components/NGOUploadProfile";
+import { ViewVendors } from "./components/ViewVendors";
 
 const App = () => {
   return (
     <>
-     {/*<HomePage/> */} 
+      {/* <HomePage/>*/}
       {/*<ContactUs />*/}
-      {/**/}<JoinUs />
+      {/*<JoinUs />*/}
+      {/*<UserHomePage/>*/}
+      {/*<VendorHomePage/>*/}
+      {/*<AdminHomePage/>*/}
+      {/*<NGOHomePage/>*/}
+      {/*<UserUploadTrash/>*/}
+      {/*<VendorUploadProfile/>*/}
+      {/*<NGOUploadProfile/>*/}
+      {/**/} <ViewVendors/>
+      {/**/}
+      {/**/}
     </>
   );
 };

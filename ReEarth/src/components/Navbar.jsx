@@ -29,7 +29,7 @@ const Navbar = () => {
           <PiDotOutlineFill className='h-8 text-[rgb(172,215,156)]' />
           <button className="cursor-pointer h-8 w-auto px-5  border-solid border-1 border-gray-300 rounded-xl hover:border-gray-700 ease-in-out transition">
             Discover Waste Insights
-            
+          
           </button>
           
         </div>
