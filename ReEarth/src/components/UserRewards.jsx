@@ -109,72 +109,74 @@ export default function UserRewards({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100 flex-col items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100">
       <Navbar />
       
-      {loading ? (
-        <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 m-5 flex justify-center">
-          <p className="text-gray-600">Loading your rewards...</p>
-        </div>
-      ) : error ? (
-        <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 m-5">
-          <div className="flex items-center justify-center space-x-2 text-red-600">
-            <AlertCircle size={32} />
-            <h1 className="text-xl font-semibold">{error}</h1>
+      <div className="container mx-auto px-4 py-8 flex justify-center items-center">
+        {loading ? (
+          <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 m-5 flex justify-center">
+            <p className="text-gray-600">Loading your rewards...</p>
           </div>
-        </div>
-      ) : userData && userData.giveReward ? (
-        <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6 m-5">
-          <div className="flex items-center justify-center space-x-2 text-green-600">
-            <TreePine size={32} />
-            <h1 className="text-3xl font-bold">{vendorName}</h1>
+        ) : error ? (
+          <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 m-5">
+            <div className="flex items-center justify-center space-x-2 text-red-600">
+              <AlertCircle size={32} />
+              <h1 className="text-xl font-semibold">{error}</h1>
+            </div>
           </div>
-          
-          <div className="text-center space-y-2">
-            <Award className="w-16 h-16 mx-auto text-green-500" />
-            <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
-            <p className="text-gray-600">{subtitle}</p>
-          </div>
-          
-          <div className="bg-green-50 rounded-xl p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-green-200 pb-4">
-              <span className="text-gray-600">{metricLabel}</span>
-              <span className="text-2xl font-bold text-green-700">{userData.weight} {metricUnit}</span>
+        ) : userData && userData.giveReward ? (
+          <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6 m-5">
+            <div className="flex items-center justify-center space-x-2 text-green-600">
+              <TreePine size={32} />
+              <h1 className="text-3xl font-bold">{vendorName}</h1>
             </div>
             
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Certificate ID</span>
-              <span className="text-green-700 font-mono">{userData.id || generateRandomString()}</span>
+            <div className="text-center space-y-2">
+              <Award className="w-16 h-16 mx-auto text-green-500" />
+              <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
+              <p className="text-gray-600">{subtitle}</p>
+            </div>
+            
+            <div className="bg-green-50 rounded-xl p-6 space-y-4">
+              <div className="flex items-center justify-between border-b border-green-200 pb-4">
+                <span className="text-gray-600">{metricLabel}</span>
+                <span className="text-2xl font-bold text-green-700">{userData.weight} {metricUnit}</span>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Certificate ID</span>
+                <span className="text-green-700 font-mono">{userData.id || generateRandomString()}</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-center space-x-2">
+              <Leaf className="text-green-500" />
+              <p className="text-sm text-gray-600">{userData.text || message}</p>
+            </div>
+            
+            <button
+              onClick={handleDownload}
+              className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 w-full"
+            >
+              <Download size={20} />
+              {downloadLabel}
+            </button>
+          </div>
+        ) : (
+          <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6 m-5">
+            <div className="flex items-center justify-center space-x-2 text-yellow-600">
+              <AlertCircle size={32} />
+              <h1 className="text-2xl font-semibold">No Rewards Available</h1>
+            </div>
+            
+            <div className="text-center p-4">
+              <p className="text-gray-600">
+                You don't have any eligible rewards at the moment. Continue contributing to unlock your certificate!
+              </p>
             </div>
           </div>
-          
-          <div className="flex items-center justify-center space-x-2">
-            <Leaf className="text-green-500" />
-            <p className="text-sm text-gray-600">{userData.text || message}</p>
-          </div>
-          
-          <button
-            onClick={handleDownload}
-            className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 w-full"
-          >
-            <Download size={20} />
-            {downloadLabel}
-          </button>
-        </div>
-      ) : (
-        <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6 m-5">
-          <div className="flex items-center justify-center space-x-2 text-yellow-600">
-            <AlertCircle size={32} />
-            <h1 className="text-2xl font-semibold">No Rewards Available</h1>
-          </div>
-          
-          <div className="text-center p-4">
-            <p className="text-gray-600">
-              You don't have any eligible rewards at the moment. Continue contributing to unlock your certificate!
-            </p>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
