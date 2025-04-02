@@ -16,12 +16,9 @@ const AdminHomePage = () => {
             <div className=" flex col-span-2 ml-5 gap-4">
 
               <div>
-              <button className="border-0 p-2 w-50 h-25 rounded-lg text-xl font-semibold px-2 cursor-pointer bg-[rgb(13,184,117)] text-gray-900 hover:bg-gray-900 hover:text-white">
-                  View Transactions Status
-                </button>
-              </div>
-              <div>
-              <button className="border-0 p-2 w-60 h-25 rounded-lg text-xl font-semibold px-2 cursor-pointer bg-[rgb(13,184,117)] text-gray-900 hover:bg-gray-900 hover:text-white">
+              <button className="border-0 p-2 w-60 h-25 rounded-lg text-xl ml-20 font-semibold px-2 cursor-pointer bg-[rgb(13,184,117)] text-gray-900 hover:bg-gray-900 hover:text-white">
+                  View Transactions 
+                  and
                   Assign Coupons/Certificates
                 </button>
               </div>
