@@ -1,8 +1,26 @@
 import React, { useState } from 'react';
 import { Upload, MapPin, Trash2, AlertCircle } from 'lucide-react';
 import Navbar from './Navbar';
+import { db, storage } from "../../firebase"; // Import your firebase configuration
+import { addDoc, collection } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export function UserUploadTrash() {
+
+
+  function generateRandomString(length = 8) {
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let randomString = '';
+    
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      randomString += charset[randomIndex];
+    }
+    
+    return randomString;
+  }
+
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -32,13 +50,39 @@ export function UserUploadTrash() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
+    try {
+      let downloadURL = null;
+      
+      // Upload image to Firebase Storage if an image is selected
+      if (formData.image) {
+        const imageRef = ref(storage, `UserUploadTrash/${generateRandomString()}`);
+        await uploadBytes(imageRef, formData.image);
+        downloadURL = await getDownloadURL(imageRef);
+      }
+      
+      // Create a new form data object with the image URL
+      const wasteData = {
+        name: formData.name,
+        email: formData.email,
+        wasteType: formData.wasteType,
+        wasteCategory: formData.wasteCategory,
+        weight: formData.weight,
+        location: formData.location,
+        method: formData.method,
+        imageUrl: downloadURL,
+        timestamp: new Date(),
+        status: "pending"
+      };
+      
+      // Add data to Firestore
+      const wasteCollectionRef = collection(db, "UserUploadTrash");
+      await addDoc(wasteCollectionRef, wasteData);
+      
+      console.log('Form submitted:', wasteData);
       setIsSubmitting(false);
       setSubmitSuccess(true);
       
@@ -57,7 +101,11 @@ export function UserUploadTrash() {
         });
         setPreviewImage(null);
       }, 3000);
-    }, 1500);
+    } catch (error) {
+      console.error("Error submitting waste report:", error);
+      alert("Failed to submit waste report. Please try again.");
+      setIsSubmitting(false);
+    }
   };
 
   return (

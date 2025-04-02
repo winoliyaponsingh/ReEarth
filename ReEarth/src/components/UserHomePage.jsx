@@ -26,7 +26,7 @@ const UserHomePage = () => {
       title: "View Transactions",
       icon: <LuHistory className="w-6 h-6" />,
       description: "Track your recycling history and payments",
-      navigate: "/user-transactions", // Adding a route for transactions
+      navigate: "/user-view-transaction", // Adding a route for transactions
       color: "bg-teal-600",
     },
     {
