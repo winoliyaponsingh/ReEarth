@@ -1,4 +1,5 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { GoTrash } from "react-icons/go";
 import HomePage from "./components/HomePage";
 import ContactUs from "./components/ContactUs";
@@ -11,23 +12,20 @@ import { UserUploadTrash } from "./components/UserUploadTrash";
 import { VendorUploadProfile } from "./components/VendorUploadProfile";
 import { NGOUploadProfile } from "./components/NGOUploadProfile";
 import { ViewVendors } from "./components/ViewVendors";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ImageAnalyzer from "./components/ImageAnalyser";
+
+
 
 const App = () => {
   return (
     <>
-      {/* <HomePage/>*/}
-      {/*<ContactUs />*/}
-      {/*<JoinUs />*/}
-      {/*<UserHomePage/>*/}
-      {/*<VendorHomePage/>*/}
-      {/*<AdminHomePage/>*/}
-      {/*<NGOHomePage/>*/}
-      {/*<UserUploadTrash/>*/}
-      {/*<VendorUploadProfile/>*/}
-      {/*<NGOUploadProfile/>*/}
-      {/**/} <ViewVendors/>
-      {/**/}
-      {/**/}
+      <Router>
+        <Routes>
+          <Route path="/contact" element={<ContactUs />} />
+        </Routes>
+      </Router>
     </>
   );
 };
