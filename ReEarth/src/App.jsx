@@ -15,6 +15,7 @@ import { ViewVendors } from "./components/ViewVendors";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ImageAnalyzer from "./components/ImageAnalyser";
+import ViewTrash from "./components/ViewTrash";
 
 
 
@@ -23,7 +24,13 @@ const App = () => {
     <>
       <Router>
         <Routes>
+          <Route path="/" element={<HomePage />} />
           <Route path="/contact" element={<ContactUs />} />
+          <Route path="/admin-home" element={<AdminHomePage />} />
+          <Route path="/join-us" element={<JoinUs />} />
+          <Route path="/waste-analyser" element={<ImageAnalyzer />} />
+          <Route path="/view-vendors" element={<ViewVendors />} />
+          <Route path="/view-trash" element={<ViewTrash />} />
         </Routes>
       </Router>
     </>
