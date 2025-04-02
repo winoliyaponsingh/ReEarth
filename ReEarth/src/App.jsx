@@ -33,11 +33,14 @@ const App = () => {
           <Route path="/vendor-home" element={<VendorHomePage />} />
           <Route path="/join-us" element={<JoinUs />} />
           <Route path="/waste-analyser" element={<ImageAnalyzer />} />
-          <Route path="/view-vendors" element={<ViewVendors />} />
-          <Route path="/view-trash" element={<ViewTrash />} />
           <Route path="/user-home" element={<UserHomePage />} />
           <Route path="/join-us" element={<JoinUs />} />
           <Route path="/user-view-ngo" element={<ViewNGO />} />
+          <Route path="/user-upload-trash" element={<UserUploadTrash />} />
+          <Route path="/user-view-vendors" element={<ViewVendors />} />
+          <Route path="/vendor-upload-profile" element={<VendorUploadProfile />} />
+          <Route path="/vendor-view-trash" element={<ViewTrash />} />
+          <Route path="/ngo-upload-profile" element={<NGOUploadProfile />} />
 
 
 

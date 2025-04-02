@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, MapPin } from 'lucide-react';
+import { Upload, MapPin, Trash2, AlertCircle } from 'lucide-react';
 import Navbar from './Navbar';
 
 export function UserUploadTrash() {
@@ -13,178 +13,292 @@ export function UserUploadTrash() {
     location: '',
     method: ''
   });
+  
+  const [previewImage, setPreviewImage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      setFormData({...formData, image: file});
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      console.log('Form submitted:', formData);
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
+      
+      // Reset form after 3 seconds
+      setTimeout(() => {
+        setSubmitSuccess(false);
+        setFormData({
+          name: '',
+          email: '',
+          wasteType: '',
+          wasteCategory: '',
+          weight: '',
+          image: null,
+          location: '',
+          method: ''
+        });
+        setPreviewImage(null);
+      }, 3000);
+    }, 1500);
   };
 
   return (
-  <>
-  <Navbar/>
-    <div className="min-h-screen bg-gradient-to-br   p-6">
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2">
-          {/* Left Panel */}
-          <div className="p-8 bg-lime-100">
-            <div className="mb-8">
-              <h1 className="text-5xl font-bold text-[rgb(13,184,117)]">ReEarth.</h1>
-              <p className="mt-4 text-gray-700">Together, Let's ReEarth for a Greener Tomorrow!</p>
-            </div>
-            <div className="relative h-64 rounded-xl overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80"
-                alt="Environmental"
-                className="object-cover w-full h-full"
-              />
-            </div>
-          </div>
-
-          {/* Right Panel */}
-          <div className="p-8 bg-[rgb(13,184,117)]">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <h2 className="text-3xl font-bold text-white mb-6">Upload Waste</h2>
-
-              <div>
-                <label className="block text-white font-semibold mb-2">Name</label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-2 rounded-xl bg-lime-100 border-0 focus:ring-2 focus:ring-white"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  required
-                />
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div className="flex flex-col lg:flex-row">
+            {/* Left Panel - Info Section */}
+            <div className="w-full lg:w-1/3 bg-gradient-to-br from-lime-50 to-emerald-100 p-6 lg:p-8">
+              <div className="mb-8">
+                <h1 className="text-4xl font-bold text-emerald-600">
+                  Re<span className="text-emerald-500">Earth</span>
+                </h1>
+                <p className="mt-4 text-gray-700 font-medium">
+                  Together, Let's ReEarth for a Greener Tomorrow!
+                </p>
               </div>
-
-              <div>
-                <label className="block text-white font-semibold mb-2">Email</label>
-                <input
-                  type="email"
-                  className="w-full px-4 py-2 rounded-xl bg-lime-100 border-0 focus:ring-2 focus:ring-white"
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-white font-semibold mb-2">Waste Type</label>
-                  <select
-                    className="w-full px-4 py-2 rounded-xl bg-lime-100 border-0 focus:ring-2 focus:ring-white"
-                    value={formData.wasteType}
-                    onChange={(e) => setFormData({...formData, wasteType: e.target.value})}
-                    required
-                  >
-                    <option value="">Select Type</option>
-                    <option value="plastic">Plastic</option>
-                    <option value="metal">Metal</option>
-                    <option value="paper">Paper</option>
-                    <option value="organic">Organic</option>
-                    <option value="e-waste">E-Waste</option>
-                  </select>
+              
+              <div className="space-y-6">
+                <div className="p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <Trash2 className="h-5 w-5 text-emerald-600 mr-2" />
+                    <h3 className="font-semibold text-gray-800">Why Report Waste?</h3>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    By reporting waste, you help us identify hotspots and allocate resources efficiently. 
+                    Your contribution makes a real difference!
+                  </p>
                 </div>
-
-                <div>
-                  <label className="block text-white font-semibold mb-2">Category</label>
-                  <select
-                    className="w-full px-4 py-2 rounded-xl bg-lime-100 border-0 focus:ring-2 focus:ring-white"
-                    value={formData.wasteCategory}
-                    onChange={(e) => setFormData({...formData, wasteCategory: e.target.value})}
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    <option value="recyclable">Recyclable</option>
-                    <option value="hazardous">Hazardous</option>
-                    <option value="general">General Waste</option>
-                  </select>
+                
+                <div className="p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <AlertCircle className="h-5 w-5 text-emerald-600 mr-2" />
+                    <h3 className="font-semibold text-gray-800">What Happens Next?</h3>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Our team will evaluate your submission and arrange proper disposal
+                    based on your preferred collection method.
+                  </p>
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-white font-semibold mb-2">Weight (kg)</label>
-                <input
-                  type="number"
-                  className="w-full px-4 py-2 rounded-xl bg-lime-100 border-0 focus:ring-2 focus:ring-white"
-                  value={formData.weight}
-                  onChange={(e) => setFormData({...formData, weight: e.target.value})}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-white font-semibold mb-2">Upload Image</label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    className="hidden"
-                    id="waste-image"
-                    accept="image/*"
-                    onChange={(e) => setFormData({...formData, image: e.target.files?.[0] || null})}
-                  />
-                  <label
-                    htmlFor="waste-image"
-                    className="flex items-center justify-center w-full px-4 py-2 rounded-xl bg-lime-100 cursor-pointer hover:bg-lime-200 transition-colors"
-                  >
-                    <Upload className="w-5 h-5 mr-2" />
-                    Choose Image
-                  </label>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-white font-semibold mb-2">Location</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 pl-10 rounded-xl bg-lime-100 border-0 focus:ring-2 focus:ring-white"
-                    value={formData.location}
-                    onChange={(e) => setFormData({...formData, location: e.target.value})}
-                    placeholder="Enter your location"
-                    required
-                  />
-                  <MapPin className="absolute left-3 top-2.5 w-5 h-5 text-gray-500" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-white font-semibold mb-2">Collection Method</label>
-                <div className="grid grid-cols-2 gap-4">
-                  <label className="flex items-center bg-lime-100 p-3 rounded-xl cursor-pointer hover:bg-lime-200">
-                    <input
-                      type="radio"
-                      name="method"
-                      value="pickup"
-                      checked={formData.method === 'pickup'}
-                      onChange={(e) => setFormData({...formData, method: e.target.value})}
-                      className="mr-2"
+                
+                {/* Preview Image */}
+                {previewImage ? (
+                  <div className="mt-4 relative rounded-xl overflow-hidden h-44 bg-gray-100">
+                    <img 
+                      src={previewImage}
+                      alt="Waste preview" 
+                      className="w-full h-full object-cover"
                     />
-                    Pick Up
-                  </label>
-                  <label className="flex items-center bg-lime-100 p-3 rounded-xl cursor-pointer hover:bg-lime-200">
-                    <input
-                      type="radio"
-                      name="method"
-                      value="dropoff"
-                      checked={formData.method === 'dropoff'}
-                      onChange={(e) => setFormData({...formData, method: e.target.value})}
-                      className="mr-2"
-                    />
-                    Drop Off
-                  </label>
-                </div>
+                  </div>
+                ) : (
+                  <div className="mt-4 relative rounded-xl overflow-hidden h-44 bg-gray-100">
+                    <div className="flex items-center justify-center h-full text-gray-400">
+                      <span>Image preview will appear here</span>
+                    </div>
+                  </div>
+                )}
               </div>
-
-              <button
-                type="submit"
-                className="w-full bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-gray-800 transition-colors"
-              >
-                Submit Request
-              </button>
-            </form>
+            </div>
+            
+            {/* Right Panel - Form Section */}
+            <div className="w-full lg:w-2/3 bg-white p-6 lg:p-8">
+              {submitSuccess ? (
+                <div className="h-full flex items-center justify-center">
+                  <div className="text-center p-6">
+                    <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2">Thank You!</h2>
+                    <p className="text-gray-600">Your waste report has been submitted successfully.</p>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-6">Upload Waste Details</h2>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {/* Name Field */}
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-1 text-sm">Full Name</label>
+                      <input
+                        type="text"
+                        className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        required
+                        placeholder="John Doe"
+                      />
+                    </div>
+                    
+                    {/* Email Field */}
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-1 text-sm">Email</label>
+                      <input
+                        type="email"
+                        className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        required
+                        placeholder="example@email.com"
+                      />
+                    </div>
+                    
+                    {/* Waste Type Field */}
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-1 text-sm">Waste Type</label>
+                      <select
+                        className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        value={formData.wasteType}
+                        onChange={(e) => setFormData({...formData, wasteType: e.target.value})}
+                        required
+                      >
+                        <option value="">Select Type</option>
+                        <option value="plastic">Plastic</option>
+                        <option value="metal">Metal</option>
+                        <option value="paper">Paper</option>
+                        <option value="organic">Organic</option>
+                        <option value="e-waste">E-Waste</option>
+                        <option value="glass">Glass</option>
+                        <option value="textile">Textile</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                    
+                    {/* Category Field */}
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-1 text-sm">Category</label>
+                      <select
+                        className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        value={formData.wasteCategory}
+                        onChange={(e) => setFormData({...formData, wasteCategory: e.target.value})}
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        <option value="recyclable">Recyclable</option>
+                        <option value="hazardous">Hazardous</option>
+                        <option value="general">General Waste</option>
+                        <option value="compostable">Compostable</option>
+                      </select>
+                    </div>
+                    
+                    {/* Weight Field */}
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-1 text-sm">Approximate Weight (kg)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        value={formData.weight}
+                        onChange={(e) => setFormData({...formData, weight: e.target.value})}
+                        required
+                        placeholder="0.0"
+                      />
+                    </div>
+                    
+                    {/* Image Upload Field */}
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-1 text-sm">Upload Image</label>
+                      <div className="relative">
+                        <input
+                          type="file"
+                          className="hidden"
+                          id="waste-image"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                        />
+                        <label
+                          htmlFor="waste-image"
+                          className="flex items-center justify-center w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors"
+                        >
+                          <Upload className="w-4 h-4 mr-2 text-gray-500" />
+                          <span className="text-gray-600">{formData.image ? formData.image.name : 'Choose Image'}</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Location Field */}
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-1 text-sm">Location</label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        className="w-full px-4 py-2 pl-10 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        value={formData.location}
+                        onChange={(e) => setFormData({...formData, location: e.target.value})}
+                        placeholder="Enter your location"
+                        required
+                      />
+                      <MapPin className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
+                    </div>
+                  </div>
+                  
+                  {/* Collection Method Field */}
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-1 text-sm">Collection Method</label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="flex items-center border border-gray-200 p-3 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                        <input
+                          type="radio"
+                          name="method"
+                          value="pickup"
+                          checked={formData.method === 'pickup'}
+                          onChange={(e) => setFormData({...formData, method: e.target.value})}
+                          className="mr-2 text-emerald-600 focus:ring-emerald-500"
+                        />
+                        <span className="text-gray-700">Pick Up</span>
+                      </label>
+                      <label className="flex items-center border border-gray-200 p-3 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                        <input
+                          type="radio"
+                          name="method"
+                          value="dropoff" 
+                          checked={formData.method === 'dropoff'}
+                          onChange={(e) => setFormData({...formData, method: e.target.value})}
+                          className="mr-2 text-emerald-600 focus:ring-emerald-500"
+                        />
+                        <span className="text-gray-700">Drop Off</span>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`w-full bg-emerald-600 text-white font-medium py-3 rounded-lg hover:bg-emerald-700 transition-colors ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
+                  >
+                    {isSubmitting ? 'Submitting...' : 'Submit Waste Report'}
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div></>
+    </div>
   );
 }
