@@ -36,7 +36,7 @@ const Navbar = () => {
               <PiDotOutlineFill className='h-8 text-[rgb(172,215,156)]' />
               
               <button className="cursor-pointer h-8 px-5 border border-gray-300 rounded-xl hover:border-gray-700 transition"
-                onClick={() => navigate('/join-us')}
+                onClick={() => {navigate('/join-us')}}
               >
                 Join ReEarth Now
               </button>
