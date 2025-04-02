@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Building2, MapPin, Mail, Recycle, X, Filter, Search, Leaf, ArrowRight } from 'lucide-react';
 import Navbar from './Navbar';
+import { collection, getDocs, doc, updateDoc, arrayUnion, getFirestore } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export function ViewVendors() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -9,78 +11,44 @@ export function ViewVendors() {
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('All');
+  const [vendors, setVendors] = useState([]);
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
   const modalRef = useRef(null);
   const initialFocusRef = useRef(null);
+  const fileInputRef = useRef(null);
 
-  // Sample vendor data - in a real app, this would come from an API
-  const vendors = [
-    {
-      id: 1,
-      businessName: "EcoRecycle Solutions",
-      businessType: "Recycling Center",
-      wasteTypes: ["Paper", "Plastic", "Electronics"],
-      location: "123 Green Street, Eco City",
-      email: "contact@ecorecycle.com",
-      collectionMethod: "drop-off",
-      rating: 4.8,
-      successRate: "96%"
-    },
-    {
-      id: 2,
-      businessName: "Green Earth Recyclers",
-      businessType: "Waste Management",
-      wasteTypes: ["Metal", "Glass", "Organic"],
-      location: "456 Sustainability Ave, Green Valley",
-      email: "info@greenearth.org",
-      collectionMethod: "pickup",
-      rating: 4.5,
-      successRate: "92%"
-    },
-    {
-      id: 3,
-      businessName: "Urban Composters",
-      businessType: "Organic Recycling",
-      wasteTypes: ["Food Waste", "Garden Waste", "Organic"],
-      location: "789 Compost Lane, Urban District",
-      email: "hello@urbancomposters.net",
-      collectionMethod: "both",
-      rating: 4.7,
-      successRate: "94%"
-    },
-    {
-      id: 4,
-      businessName: "Tech Waste Solutions",
-      businessType: "E-Waste",
-      wasteTypes: ["Electronics", "Batteries", "Appliances"],
-      location: "321 Circuit Road, Tech Park",
-      email: "service@techwaste.com",
-      collectionMethod: "drop-off",
-      rating: 4.9,
-      successRate: "97%"
-    },
-    {
-      id: 5,
-      businessName: "Paper Recycling Co.",
-      businessType: "Paper Processing",
-      wasteTypes: ["Paper", "Cardboard", "Magazines"],
-      location: "555 Pulp Street, Paper Town",
-      email: "recycle@paperco.com",
-      collectionMethod: "pickup",
-      rating: 4.3,
-      successRate: "89%"
-    },
-    {
-      id: 6,
-      businessName: "Metal Scrappers Inc.",
-      businessType: "Metal Recycling",
-      wasteTypes: ["Metal", "Aluminum", "Steel"],
-      location: "777 Iron Way, Steel City",
-      email: "info@metalscrappers.com",
-      collectionMethod: "both",
-      rating: 4.6,
-      successRate: "93%"
-    }
-  ];
+  const db = getFirestore();
+  const storage = getStorage();
+
+  // Fetch vendors from Firestore
+  useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        const vendorsCollection = collection(db, "VendorUploadProfile");
+        const vendorSnapshot = await getDocs(vendorsCollection);
+        const vendorList = vendorSnapshot.docs
+          .filter(doc => doc.data().status === "pending")
+          .map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            businessName: doc.data().businessName || doc.data().name || "Unknown Business",
+            businessType: doc.data().businessType || doc.data().wasteType || "Recycling Center",
+            wasteTypes: doc.data().wasteTypes || [doc.data().wasteType || "General"],
+            location: doc.data().location || doc.data().address || "Unknown Location",
+            email: doc.data().email || "contact@example.com",
+            collectionMethod: doc.data().collectionMethod || "drop-off",
+            rating: doc.data().rating || 4.5,
+            successRate: doc.data().successRate || "90%"
+          }));
+        setVendors(vendorList);
+      } catch (error) {
+        console.error("Error fetching vendors:", error);
+      }
+    };
+
+    fetchVendors();
+  }, [db]);
 
   // Get all waste types for filter dropdown
   const allWasteTypes = ['All', ...new Set(vendors.flatMap(vendor => vendor.wasteTypes))];
@@ -96,6 +64,23 @@ export function ViewVendors() {
   const openModal = (vendor) => {
     setSelectedVendor(vendor);
     setIsModalOpen(true);
+    setPhotoFile(null);
+    setPhotoPreview(null);
+    setSubmitError(null);
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhotoFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -103,26 +88,41 @@ export function ViewVendors() {
     setIsSubmitting(true);
     setSubmitError(null);
     
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(e.target);
     
     try {
-      // Replace this with your actual API call
-      console.log('Form submitted with data:', {
+      // 1. Upload image to Firebase Storage
+      let photoURL = null;
+      if (photoFile) {
+        const storageRef = ref(storage, `VendorUploadProfile/${selectedVendor.id}/${Date.now()}_${photoFile.name}`);
+        const snapshot = await uploadBytes(storageRef, photoFile);
+        photoURL = await getDownloadURL(snapshot.ref);
+      }
+      
+      // 2. Create request object
+      const requestData = {
         name: formData.get('name'),
         email: formData.get('email'),
         wasteType: formData.get('wasteType'),
         weight: formData.get('weight'),
-        photo: formData.get('wastePhoto'),
-        vendorId: selectedVendor.id
+        photoURL: photoURL,
+        requestDate: new Date(),
+        status: "pending" // Status of the request, not the vendor
+      };
+      
+      // 3. Update the vendor document in Firestore
+      const vendorRef = doc(db, "VendorUploadProfile", selectedVendor.id);
+      await updateDoc(vendorRef, {
+        requests: arrayUnion(requestData),
+        status: "approved" // Update vendor status to approved
       });
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
+      // 4. Close modal and show success
       setIsModalOpen(false);
-      // Add success message toast here in a real implementation
+      alert("Your request has been submitted successfully!");
+      
     } catch (error) {
-      setSubmitError('Failed to submit request. Please try again.');
+      setSubmitError(`Failed to submit request: ${error.message}`);
       console.error('Error submitting form:', error);
     } finally {
       setIsSubmitting(false);
@@ -448,24 +448,50 @@ export function ViewVendors() {
                   <label htmlFor="wastePhoto" className="block text-sm font-medium text-gray-700 mb-1">
                     Waste Photo
                   </label>
-                  <div className="border-2 border-dashed border-green-200 rounded-lg p-4 text-center hover:bg-green-50 transition-colors">
+                  <div 
+                    className={`border-2 border-dashed ${photoPreview ? 'border-green-300 bg-green-50' : 'border-green-200'} rounded-lg p-4 text-center hover:bg-green-50 transition-colors`}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
                     <input
+                      ref={fileInputRef}
                       type="file"
                       id="wastePhoto"
                       name="wastePhoto"
                       accept="image/*"
                       required
                       className="hidden"
+                      onChange={handlePhotoChange}
                     />
-                    <label htmlFor="wastePhoto" className="cursor-pointer">
-                      <div className="flex flex-col items-center justify-center">
-                        <svg className="w-8 h-8 text-green-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span className="text-green-600 font-medium">Upload a photo</span>
-                        <span className="text-xs text-gray-500 mt-1">Click to browse or drag & drop</span>
+                    {photoPreview ? (
+                      <div className="relative">
+                        <img 
+                          src={photoPreview} 
+                          alt="Waste preview" 
+                          className="max-h-32 mx-auto rounded-lg"
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPhotoFile(null);
+                            setPhotoPreview(null);
+                          }}
+                          className="absolute top-1 right-1 bg-red-100 text-red-500 rounded-full p-1 hover:bg-red-200"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
                       </div>
-                    </label>
+                    ) : (
+                      <div className="cursor-pointer">
+                        <div className="flex flex-col items-center justify-center">
+                          <svg className="w-8 h-8 text-green-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                          </svg>
+                          <span className="text-green-600 font-medium">Upload a photo</span>
+                          <span className="text-xs text-gray-500 mt-1">Click to browse or drag & drop</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <p className="text-xs text-gray-500 mt-1">Please upload a clear image of your waste (max 5MB)</p>
                 </div>
@@ -479,9 +505,9 @@ export function ViewVendors() {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !photoFile}
                     className={`w-full px-4 py-3 text-white rounded-lg transition-colors font-medium shadow-md ${
-                      isSubmitting ? 'bg-green-300 cursor-not-allowed' : 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
+                      isSubmitting || !photoFile ? 'bg-green-300 cursor-not-allowed' : 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
                     }`}
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit Request'}

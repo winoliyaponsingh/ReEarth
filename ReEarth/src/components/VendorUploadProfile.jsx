@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Building2, MapPin, Leaf, Mail, CheckCircle } from 'lucide-react';
 import Navbar from './Navbar';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../../firebase'; // Make sure you have this firebase config file
 
 export function VendorUploadProfile() {
   const [formData, setFormData] = useState({
@@ -16,6 +18,7 @@ export function VendorUploadProfile() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const handleWasteTypeChange = (type) => {
     if (type === 'all') {
@@ -33,13 +36,25 @@ export function VendorUploadProfile() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(null);
     
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
+    try {
+      // Add vendor profile to Firestore collection
+      const vendorData = {
+        ...formData,
+        status: 'pending', // Set initial status as pending
+        createdAt: new Date(),
+        rating: 0,
+        successRate: '0%',
+        requests: [] // Initialize empty requests array
+      };
+      
+      await addDoc(collection(db, "VendorUploadProfile"), vendorData);
+      
+      console.log('Vendor profile submitted:', vendorData);
       setIsSubmitting(false);
       setSubmitSuccess(true);
       
@@ -57,7 +72,11 @@ export function VendorUploadProfile() {
           collectionMethod: ''
         });
       }, 3000);
-    }, 1500);
+    } catch (error) {
+      console.error('Error adding vendor profile:', error);
+      setSubmitError('Failed to submit profile. Please try again.');
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -140,6 +159,12 @@ export function VendorUploadProfile() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <h2 className="text-2xl font-bold text-gray-800 mb-6">Vendor Registration</h2>
                   
+                  {submitError && (
+                    <div className="p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
+                      {submitError}
+                    </div>
+                  )}
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* Business Name Field */}
                     <div className="md:col-span-2">
@@ -167,12 +192,12 @@ export function VendorUploadProfile() {
                         required
                       >
                         <option value="">Select Business Type</option>
-                        <option value="recycling">Recycling Facility</option>
-                        <option value="collection">Waste Collection Center</option>
-                        <option value="hazardous">Hazardous Waste Handler</option>
-                        <option value="composting">Composting Facility</option>
-                        <option value="upcycling">Upcycling Business</option>
-                        <option value="repair">Repair & Refurbishment</option>
+                        <option value="Recycling Center">Recycling Facility</option>
+                        <option value="Waste Management">Waste Collection Center</option>
+                        <option value="Organic Recycling">Composting Facility</option>
+                        <option value="E-Waste">Hazardous Waste Handler</option>
+                        <option value="Paper Processing">Upcycling Business</option>
+                        <option value="Metal Recycling">Repair & Refurbishment</option>
                       </select>
                     </div>
                     
@@ -264,7 +289,7 @@ export function VendorUploadProfile() {
                   <div>
                     <label className="block text-gray-700 font-medium mb-1 text-sm">Collection Method</label>
                     <div className="grid grid-cols-3 gap-3">
-                      {['pickup', 'dropoff', 'both'].map((method) => (
+                      {['pickup', 'drop-off', 'both'].map((method) => (
                         <label key={method} className={`flex items-center p-3 rounded-lg cursor-pointer border border-gray-200 transition-colors ${formData.collectionMethod === method ? 'bg-emerald-50 border-emerald-200' : 'hover:bg-gray-50'}`}>
                           <input
                             type="radio"

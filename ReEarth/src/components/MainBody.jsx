@@ -5,7 +5,7 @@ import { LuLeaf } from "react-icons/lu";
 const MainBody = () => {
   return (
     <div >
-      <div className="flex flex-row justify-center items-center h-140">
+      <div className="flex flex-row justify-center items-center h-140 mx-5">
         <div className="w-150 h-100  justify-center items-center  mt-20  mr-20 mb-10 rounded-lg grid grid-row-4 gap-2 ">
           <div className="flex justify-center ">
             <h1 className="text-7xl font-bold">

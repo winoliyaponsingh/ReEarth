@@ -17,6 +17,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import ImageAnalyzer from "./components/ImageAnalyser";
 import ViewTrash from "./components/ViewTrash";
 import ViewNGO from "./components/ViewNGO";
+import UserViewTransactions from './components/UserViewTransactions'
+import VendorViewTransactions from "./components/VendorViewTransactions";
 
 
 
@@ -41,6 +43,8 @@ const App = () => {
           <Route path="/vendor-upload-profile" element={<VendorUploadProfile />} />
           <Route path="/vendor-view-trash" element={<ViewTrash />} />
           <Route path="/ngo-upload-profile" element={<NGOUploadProfile />} />
+          <Route path="/user-view-transaction" element={<UserViewTransactions />} />
+          <Route path="/vendor-view-transactions" element={<VendorViewTransactions />} />
 
 
 

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { User, Mail, Recycle, Weight, MapPin, Truck, Image as ImageIcon, Building2, X, Filter } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { User, Mail, Recycle, Weight, MapPin, Truck, Image as ImageIcon, Building2, X, Filter, Check, X as XIcon } from 'lucide-react';
 import Navbar from './Navbar';
+import { collection, getDocs, doc, updateDoc, getFirestore } from 'firebase/firestore';
 
 function ViewTrash() {
   const [showForm, setShowForm] = useState(false);
@@ -11,43 +12,58 @@ function ViewTrash() {
     wasteWeight: 0,
     collectionMethod: 'pickup',
   });
+  const [wasteItems, setWasteItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [updateMessage, setUpdateMessage] = useState('');
 
-  // Sample waste data array
-  const sampleWastes = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@example.com",
-      wasteCategory: "Recyclable",
-      wasteType: "Electronic Waste",
-      wasteWeight: 5.2,
-      location: "123 Green Street, Eco City",
-      collectionMethod: "scheduled pickup",
-      wasteImage: "/api/placeholder/400/250"
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      wasteCategory: "Compostable",
-      wasteType: "Organic",
-      wasteWeight: 3.5,
-      location: "456 Leaf Avenue, Green Town",
-      collectionMethod: "drop off",
-      wasteImage: "/api/placeholder/400/250"
-    },
-    {
-      id: 3,
-      name: "Alex Johnson",
-      email: "alex@example.com",
-      wasteCategory: "Hazardous",
-      wasteType: "Chemical",
-      wasteWeight: 2.7,
-      location: "789 Pine Road, Eco Village",
-      collectionMethod: "scheduled pickup",
-      wasteImage: "/api/placeholder/400/250"
+  // Initialize Firestore
+  const db = getFirestore();
+
+  // Fetch waste data from Firestore
+  useEffect(() => {
+    const fetchWasteData = async () => {
+      try {
+        setLoading(true);
+        const wasteCollection = collection(db, "UserUploadTrash");
+        const wasteSnapshot = await getDocs(wasteCollection);
+        const wasteList = wasteSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setWasteItems(wasteList);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching waste data:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchWasteData();
+  }, []);
+
+  const handleUpdateStatus = async (itemId, newStatus) => {
+    try {
+      const wasteDocRef = doc(db, "UserUploadTrash", itemId);
+      await updateDoc(wasteDocRef, {
+        status: newStatus
+      });
+      
+      // Update local state to reflect the change
+      setWasteItems(prevItems => 
+        prevItems.map(item => 
+          item.id === itemId ? { ...item, status: newStatus } : item
+        )
+      );
+
+      // Show success message
+      setUpdateMessage(`Waste request ${newStatus}`);
+      setTimeout(() => setUpdateMessage(''), 3000);
+    } catch (error) {
+      console.error("Error updating status:", error);
+      setUpdateMessage('Failed to update status. Please try again.');
+      setTimeout(() => setUpdateMessage(''), 3000);
     }
-  ];
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -59,11 +75,25 @@ function ViewTrash() {
 
   // Function to get waste category color
   const getCategoryColor = (category) => {
+    if (!category) return 'bg-teal-600';
+    
     switch (category.toLowerCase()) {
       case 'recyclable': return 'bg-emerald-600';
       case 'compostable': return 'bg-green-600';
       case 'hazardous': return 'bg-amber-600';
       default: return 'bg-teal-600';
+    }
+  };
+
+  // Function to get status badge color
+  const getStatusColor = (status) => {
+    if (!status) return 'bg-gray-500';
+    
+    switch (status.toLowerCase()) {
+      case 'approved': return 'bg-green-600';
+      case 'rejected': return 'bg-red-600';
+      case 'pending': return 'bg-yellow-600';
+      default: return 'bg-gray-500';
     }
   };
 
@@ -81,59 +111,110 @@ function ViewTrash() {
             </button>
           </div>
         </div>
+
+        {/* Status update message */}
+        {updateMessage && (
+          <div className="mb-4 p-3 bg-emerald-100 text-emerald-800 rounded-md">
+            {updateMessage}
+          </div>
+        )}
         
-        {/* More compact grid layout for waste cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sampleWastes.map((waste) => (
-            <div key={waste.id} className="bg-white rounded-lg shadow overflow-hidden hover:shadow-md transition-shadow duration-200 border border-green-100">
-              <div className="relative">
-                <img
-                  src={waste.wasteImage}
-                  alt="Waste"
-                  className="w-full h-32 object-cover"
-                />
-                <span className={`absolute top-2 right-2 px-2 py-1 ${getCategoryColor(waste.wasteCategory)} text-white text-xs font-medium rounded-md`}>
-                  {waste.wasteCategory}
-                </span>
-              </div>
-              
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center space-x-2">
-                    <User className="w-4 h-4 text-emerald-600" />
-                    <h3 className="font-bold text-gray-800">{waste.name}</h3>
-                  </div>
-                  <span className="text-sm text-gray-500">{waste.wasteWeight} kg</span>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
-                  <div className="flex items-center space-x-1.5 text-gray-600">
-                    <Recycle className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                    <span className="truncate">{waste.wasteType}</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-1.5 text-gray-600">
-                    <Truck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                    <span className="capitalize truncate">{waste.collectionMethod}</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-1.5 text-gray-600 col-span-2">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                    <span className="truncate text-xs">{waste.location}</span>
+        {loading ? (
+          <div className="text-center py-10">
+            <p className="text-emerald-600">Loading waste collection data...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {wasteItems.length > 0 ? wasteItems.map((waste) => (
+              <div key={waste.id} className="bg-white rounded-lg shadow overflow-hidden hover:shadow-md transition-shadow duration-200 border border-green-100">
+                <div className="relative">
+                  <img
+                    src={waste.imageUrl || "/api/placeholder/400/250"}
+                    alt="Waste"
+                    className="w-full h-32 object-cover"
+                  />
+                  <div className="absolute top-2 right-2 flex flex-col gap-2">
+                    <span className={`px-2 py-1 ${getCategoryColor(waste.wasteCategory)} text-white text-xs font-medium rounded-md`}>
+                      {waste.wasteCategory}
+                    </span>
+                    <span className={`px-2 py-1 ${getStatusColor(waste.status)} text-white text-xs font-medium rounded-md`}>
+                      {waste.status || 'Unknown'}
+                    </span>
                   </div>
                 </div>
                 
-                <button
-                  onClick={() => setShowForm(true)}
-                  className="w-full py-2 bg-emerald-600 text-white text-sm rounded-md hover:bg-emerald-700 transition-colors duration-200 flex items-center justify-center space-x-1.5"
-                >
-                  <Truck className="w-4 h-4" />
-                  <span>Request Collection</span>
-                </button>
+                <div className="p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center space-x-2">
+                      <User className="w-4 h-4 text-emerald-600" />
+                      <h3 className="font-bold text-gray-800">{waste.name}</h3>
+                    </div>
+                    <span className="text-sm text-gray-500">{waste.weight} kg</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+                    <div className="flex items-center space-x-1.5 text-gray-600">
+                      <Recycle className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                      <span className="truncate">{waste.wasteType}</span>
+                    </div>
+                    
+                    <div className="flex items-center space-x-1.5 text-gray-600">
+                      <Truck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                      <span className="capitalize truncate">{waste.method}</span>
+                    </div>
+                    
+                    <div className="flex items-center space-x-1.5 text-gray-600">
+                      <Mail className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                      <span className="truncate text-xs">{waste.email}</span>
+                    </div>
+                    
+                    <div className="flex items-center space-x-1.5 text-gray-600">
+                      <MapPin className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                      <span className="truncate text-xs">{waste.location}</span>
+                    </div>
+                  </div>
+                  
+                  {waste.status && waste.status.toLowerCase() === 'pending' ? (
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleUpdateStatus(waste.id, 'approved')}
+                        className="flex-1 py-2 bg-emerald-600 text-white text-sm rounded-md hover:bg-emerald-700 transition-colors duration-200 flex items-center justify-center space-x-1.5"
+                      >
+                        <Check className="w-4 h-4" />
+                        <span>Approve</span>
+                      </button>
+                      <button
+                        onClick={() => handleUpdateStatus(waste.id, 'rejected')}
+                        className="flex-1 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors duration-200 flex items-center justify-center space-x-1.5"
+                      >
+                        <XIcon className="w-4 h-4" />
+                        <span>Reject</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className={`py-2 text-white text-sm rounded-md flex items-center justify-center space-x-1.5 ${waste.status && waste.status.toLowerCase() === 'approved' ? 'bg-emerald-600' : 'bg-red-600'}`}>
+                      {waste.status && waste.status.toLowerCase() === 'approved' ? (
+                        <>
+                          <Check className="w-4 h-4" />
+                          <span>Approved</span>
+                        </>
+                      ) : (
+                        <>
+                          <XIcon className="w-4 h-4" />
+                          <span>Rejected</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            )) : (
+              <div className="col-span-full text-center py-10">
+                <p className="text-gray-500">No waste collection requests found.</p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Modal Form - Improved and more compact */}
         {showForm && (
