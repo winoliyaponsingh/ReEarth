@@ -19,6 +19,9 @@ import ViewTrash from "./components/ViewTrash";
 import ViewNGO from "./components/ViewNGO";
 import UserViewTransactions from './components/UserViewTransactions'
 import VendorViewTransactions from "./components/VendorViewTransactions";
+import UserRewards from './components/UserRewards'
+import VendorRewards from './components/VendorRewards'
+import AdminGiveReward from "./components/AdminGiveReward";
 
 
 
@@ -45,6 +48,9 @@ const App = () => {
           <Route path="/ngo-upload-profile" element={<NGOUploadProfile />} />
           <Route path="/user-view-transaction" element={<UserViewTransactions />} />
           <Route path="/vendor-view-transactions" element={<VendorViewTransactions />} />
+          <Route path="/user-rewards" element={<UserRewards />} />
+          <Route path="/vendor-rewards" element={<VendorRewards />} />
+          <Route path="/admin-give-rewards" element={<AdminGiveReward />} />
 
 
 

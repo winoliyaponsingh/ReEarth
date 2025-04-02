@@ -113,12 +113,25 @@ const VendorProfileView = () => {
     }
   };
 
+  const getStatusBgColor = (status) => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-500';
+      case 'pending':
+        return 'bg-amber-400';
+      case 'denied':
+        return 'bg-red-400';
+      default:
+        return 'bg-gray-400';
+    }
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-green-50 p-6 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-green-700">Loading vendor profiles...</p>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-6 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-xl shadow-lg">
+          <div className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+          <p className="text-green-700 text-lg font-medium">Loading vendor profiles...</p>
         </div>
       </div>
     );
@@ -126,9 +139,14 @@ const VendorProfileView = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-green-50 p-6 flex items-center justify-center">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md shadow-md">
-          <h2 className="text-lg font-semibold text-red-800 mb-2">Error</h2>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-6 flex items-center justify-center">
+        <div className="bg-white border-l-4 border-red-500 rounded-lg p-8 max-w-md shadow-lg">
+          <h2 className="text-xl font-bold text-red-800 mb-3 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            Error
+          </h2>
           <p className="text-red-700">{error}</p>
         </div>
       </div>
@@ -137,9 +155,14 @@ const VendorProfileView = () => {
 
   if (vendorDataList.length === 0) {
     return (
-      <div className="min-h-screen bg-green-50 p-6 flex items-center justify-center">
-        <div className="bg-green-100 border border-green-200 rounded-lg p-6 max-w-md shadow-md">
-          <h2 className="text-lg font-semibold text-green-800 mb-2">No Data</h2>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-6 flex items-center justify-center">
+        <div className="bg-white border-l-4 border-green-500 rounded-lg p-8 max-w-md shadow-lg">
+          <h2 className="text-xl font-bold text-green-800 mb-3 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            No Data
+          </h2>
           <p className="text-green-700">No vendor profiles found for this email.</p>
         </div>
       </div>
@@ -147,122 +170,148 @@ const VendorProfileView = () => {
   }
   
   return (
-    <div className="min-h-screen bg-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <Navbar />
-      <div className="max-w-4xl mx-auto px-5 py-8">
-        <h1 className="text-2xl font-bold text-green-800 mb-2">Vendor Profiles</h1>
-        <p className="text-green-700 mb-6">Showing {vendorDataList.length} vendor(s) with email: {vendorEmail}</p>
+      <div className="max-w-5xl mx-auto px-6 py-12">
+        <div className="mb-8 text-center md:text-left">
+          <h1 className="text-3xl font-bold text-green-800 mb-3">Vendor Profiles</h1>
+          <div className="inline-flex items-center px-4 py-2 bg-white rounded-full shadow-sm">
+            <Mail className="w-4 h-4 text-green-600 mr-2" />
+            <span className="text-green-700">{vendorEmail}</span>
+            <span className="mx-2 text-green-300">•</span>
+            <span className="text-green-600 font-medium">{vendorDataList.length} vendor(s)</span>
+          </div>
+        </div>
         
         {/* List of Vendor Profiles */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {vendorDataList.map((vendor) => {
             const isPending = vendor.status === "pending";
             const hasRequests = vendor.requests && Object.keys(vendor.requests).length > 0;
             const isVendorExpanded = expandedItems[vendor.id] === true;
             
             return (
-              <div key={vendor.id} className="bg-white rounded-xl shadow-md overflow-hidden border border-green-100 hover:shadow-lg transition-shadow duration-300">
+              <div key={vendor.id} className="bg-white rounded-2xl shadow-lg overflow-hidden border-t border-green-100 transition-all duration-300 hover:shadow-xl">
                 {/* Vendor Header - Always visible */}
                 <div 
-                  className="p-6 flex items-center justify-between cursor-pointer bg-white border-x-1 border-y-1 rounded-xl border-gray-500"
+                  className={`p-6 cursor-pointer transition-colors duration-200 ${isVendorExpanded ? 'bg-green-50' : 'bg-white hover:bg-green-50'} flex items-center justify-between`}
                   onClick={() => toggleExpand(vendor.id)}
                 >
-                  <div className="flex items-center space-x-3">
-                    <Building2 className="w-6 h-6 text-green-600" />
-                    <h2 className="text-xl font-semibold text-green-800">{vendor.businessName}</h2>
+                  <div className="flex items-center">
+                    <div className="bg-green-100 p-3 rounded-lg mr-4">
+                      <Building2 className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-green-800">{vendor.businessName}</h2>
+                      <p className="text-green-600 text-sm">{vendor.businessType}</p>
+                    </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(vendor.status)}`}>
+                    <span className={`px-4 py-1.5 rounded-full text-sm font-medium ${getStatusColor(vendor.status)}`}>
                       {vendor.status.charAt(0).toUpperCase() + vendor.status.slice(1)}
                     </span>
-                    {isVendorExpanded ? (
-                      <ChevronUp className="w-5 h-5 text-green-500" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5 text-green-500" />
-                    )}
+                    <div className="bg-green-100 p-1.5 rounded-full transition-transform duration-200 transform">
+                      {isVendorExpanded ? (
+                        <ChevronUp className="w-5 h-5 text-green-600" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5 text-green-600" />
+                      )}
+                    </div>
                   </div>
                 </div>
                 
                 {/* Vendor Details - Shown when expanded */}
                 {isVendorExpanded && (
                   <div className="px-6 pb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                      <div className="flex items-center space-x-2">
-                        <Package className="w-4 h-4 text-green-500" />
-                        <span className="text-green-700">{vendor.businessType}</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                      <div className="bg-green-50 rounded-xl p-4">
+                        <h3 className="text-green-800 font-semibold mb-3 border-b border-green-100 pb-2">Contact Information</h3>
+                        <div className="space-y-3">
+                          <div className="flex items-center space-x-3">
+                            <Mail className="w-4 h-4 text-green-500" />
+                            <span className="text-green-700">{vendor.email}</span>
+                          </div>
+                          
+                          <div className="flex items-center space-x-3">
+                            <Phone className="w-4 h-4 text-green-500" />
+                            <span className="text-green-700">{vendor.phone}</span>
+                          </div>
+                          
+                          <div className="flex items-center space-x-3">
+                            <MapPin className="w-4 h-4 text-green-500" />
+                            <span className="text-green-700">{vendor.location}</span>
+                          </div>
+                        </div>
                       </div>
                       
-                      <div className="flex items-center space-x-2">
-                        <Mail className="w-4 h-4 text-green-500" />
-                        <span className="text-green-700">{vendor.email}</span>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <Phone className="w-4 h-4 text-green-500" />
-                        <span className="text-green-700">{vendor.phone}</span>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <MapPin className="w-4 h-4 text-green-500" />
-                        <span className="text-green-700">{vendor.location}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-4">
-                      <div className="flex items-start space-x-2">
-                        <Package className="w-4 h-4 text-green-500 mt-1" />
-                        <div>
-                          <span className="text-green-700 block mb-1">
-                            Collection method: {vendor.collectionMethod || "Not specified"}
-                          </span>
-                          <span className="text-green-700 block">
-                            Waste types: {Array.isArray(vendor.wasteTypes) 
-                              ? vendor.wasteTypes.join(', ') 
-                              : vendor.wasteTypes 
-                                ? Object.keys(vendor.wasteTypes).join(', ')
-                                : "None specified"}
-                          </span>
+                      <div className="bg-green-50 rounded-xl p-4">
+                        <h3 className="text-green-800 font-semibold mb-3 border-b border-green-100 pb-2">Waste Management</h3>
+                        <div className="space-y-3">
+                          <div className="flex items-start space-x-3">
+                            <Package className="w-4 h-4 text-green-500 mt-1" />
+                            <span className="text-green-700">
+                              Collection method: {vendor.collectionMethod || "Not specified"}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-start space-x-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            <div>
+                              <span className="text-green-700 block">
+                                Waste types: {Array.isArray(vendor.wasteTypes) 
+                                  ? vendor.wasteTypes.join(', ') 
+                                  : vendor.wasteTypes 
+                                    ? Object.keys(vendor.wasteTypes).join(', ')
+                                    : "None specified"}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="mt-4 pt-4 border-t border-green-100">
-                      <p className="text-green-700">{vendor.description || "No description available"}</p>
-                    </div>
+                    {vendor.description && (
+                      <div className="mt-6 bg-white rounded-xl p-4 border border-green-100">
+                        <h3 className="text-green-800 font-semibold mb-2">About</h3>
+                        <p className="text-green-700 leading-relaxed">{vendor.description}</p>
+                      </div>
+                    )}
                     
                     {/* Requests Section - Only shown when status is approved and requests exist */}
                     {!isPending && hasRequests && (
-                      <div className="mt-6">
-                        <h3 className="text-lg font-semibold text-green-800 mb-4">Waste Collection Requests</h3>
+                      <div className="mt-8">
+                        <h3 className="text-xl font-bold text-green-800 mb-4 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          </svg>
+                          Waste Collection Requests
+                        </h3>
                         
                         <div className="space-y-4">
                           {Object.entries(vendor.requests).map(([requestId, request]) => {
                             const isRequestExpanded = expandedItems[`${vendor.id}_${requestId}`] === true;
                             
                             return (
-                              <div key={requestId} className="bg-green-50 rounded-lg overflow-hidden border border-green-100">
+                              <div key={requestId} className="bg-white rounded-xl overflow-hidden border border-green-100 shadow-sm hover:shadow transition-shadow duration-300">
                                 <div 
-                                  className="p-4 flex items-center justify-between cursor-pointer hover:bg-green-100 transition-colors duration-200"
+                                  className="p-4 flex items-center justify-between cursor-pointer hover:bg-green-50 transition-colors duration-200"
                                   onClick={() => toggleExpand(vendor.id, requestId)}
                                 >
                                   <div className="flex items-center space-x-3">
-                                    <div className={`w-3 h-3 rounded-full ${
-                                      request.status === 'pending' 
-                                        ? 'bg-amber-400' 
-                                        : request.status === 'approved' 
-                                        ? 'bg-green-500' 
-                                        : request.status === 'denied'
-                                        ? 'bg-red-400'
-                                        : 'bg-gray-400'
-                                    }`}></div>
-                                    <span className="font-medium text-green-800">{request.name}</span>
+                                    <div className={`w-3 h-3 rounded-full ${getStatusBgColor(request.status)}`}></div>
+                                    <span className="font-semibold text-green-800">{request.name}</span>
                                   </div>
                                   <div className="flex items-center space-x-4">
-                                    <span className={`text-sm px-2 py-1 rounded-full ${getStatusColor(request.status)}`}>
+                                    <div className="flex items-center space-x-2">
+                                      <Calendar className="w-4 h-4 text-green-500" />
+                                      <span className="text-sm text-green-600">
+                                        {request.requestDate ? new Date(request.requestDate).toLocaleDateString() : 'No date'}
+                                      </span>
+                                    </div>
+                                    <span className={`text-sm px-3 py-1 rounded-full font-medium ${getStatusColor(request.status)}`}>
                                       {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                                    </span>
-                                    <span className="text-sm text-green-600">
-                                      {request.requestDate ? new Date(request.requestDate).toLocaleDateString() : 'No date'}
                                     </span>
                                     {isRequestExpanded ? (
                                       <ChevronUp className="w-5 h-5 text-green-500" />
@@ -273,63 +322,84 @@ const VendorProfileView = () => {
                                 </div>
                                 
                                 {isRequestExpanded && (
-                                  <div className="p-4 pt-0 border-t border-green-200">
+                                  <div className="p-5 pt-0 border-t border-green-100 bg-green-50">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                      <div className="flex items-center space-x-2">
+                                      <div className="bg-white p-3 rounded-lg flex items-center space-x-3">
                                         <Mail className="w-4 h-4 text-green-500" />
-                                        <span className="text-green-700">{request.email}</span>
+                                        <div>
+                                          <span className="text-xs text-green-500 block">Email</span>
+                                          <span className="text-green-700">{request.email}</span>
+                                        </div>
                                       </div>
                                       
-                                      <div className="flex items-center space-x-2">
+                                      <div className="bg-white p-3 rounded-lg flex items-center space-x-3">
                                         <Package className="w-4 h-4 text-green-500" />
-                                        <span className="text-green-700">Waste type: {request.wasteType}</span>
+                                        <div>
+                                          <span className="text-xs text-green-500 block">Waste type</span>
+                                          <span className="text-green-700">{request.wasteType}</span>
+                                        </div>
                                       </div>
                                       
-                                      <div className="flex items-center space-x-2">
+                                      <div className="bg-white p-3 rounded-lg flex items-center space-x-3">
                                         <Scale className="w-4 h-4 text-green-500" />
-                                        <span className="text-green-700">Weight: {request.weight}</span>
+                                        <div>
+                                          <span className="text-xs text-green-500 block">Weight</span>
+                                          <span className="text-green-700">{request.weight}</span>
+                                        </div>
                                       </div>
                                       
-                                      <div className="flex items-center space-x-2">
+                                      <div className="bg-white p-3 rounded-lg flex items-center space-x-3">
                                         <Calendar className="w-4 h-4 text-green-500" />
-                                        <span className="text-green-700">
-                                          {request.requestDate ? new Date(request.requestDate).toLocaleString() : 'No date available'}
-                                        </span>
+                                        <div>
+                                          <span className="text-xs text-green-500 block">Date Requested</span>
+                                          <span className="text-green-700">
+                                            {request.requestDate ? new Date(request.requestDate).toLocaleString() : 'No date available'}
+                                          </span>
+                                        </div>
                                       </div>
                                     </div>
                                     
                                     {request.photoURL && (
-                                      <div className="mt-4 flex items-center space-x-2">
-                                        <ImageIcon className="w-4 h-4 text-green-500" />
-                                        <a 
-                                          href={request.photoURL} 
-                                          target="_blank" 
-                                          rel="noopener noreferrer"
-                                          className="text-green-600 hover:underline"
-                                        >
-                                          View attached photo
-                                        </a>
+                                      <div className="mt-4 flex items-center bg-white p-3 rounded-lg">
+                                        <ImageIcon className="w-4 h-4 text-green-500 mr-3" />
+                                        <div>
+                                          <span className="text-xs text-green-500 block">Photo</span>
+                                          <a 
+                                            href={request.photoURL} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="text-green-600 hover:text-green-800 hover:underline font-medium"
+                                          >
+                                            View attached photo
+                                          </a>
+                                        </div>
                                       </div>
                                     )}
                                     
                                     {request.status === 'pending' && (
-                                      <div className="mt-4 flex space-x-2">
+                                      <div className="mt-6 flex space-x-3">
                                         <button 
-                                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-sm"
+                                          className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-sm font-medium flex items-center justify-center"
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             handleRequestAction(vendor.id, requestId, 'accept');
                                           }}
                                         >
+                                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                          </svg>
                                           Accept Request
                                         </button>
                                         <button 
-                                          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200 shadow-sm"
+                                          className="flex-1 px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200 shadow-sm font-medium flex items-center justify-center"
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             handleRequestAction(vendor.id, requestId, 'deny');
                                           }}
                                         >
+                                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                          </svg>
                                           Deny Request
                                         </button>
                                       </div>
@@ -344,10 +414,15 @@ const VendorProfileView = () => {
                     )}
                     
                     {isPending && (
-                      <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4">
-                        <div className="flex items-center space-x-2">
-                          <Clock className="w-5 h-5 text-amber-500" />
-                          <p className="text-amber-700">This vendor profile is pending approval. It will be able to receive requests once approved.</p>
+                      <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-5">
+                        <div className="flex items-center">
+                          <div className="bg-amber-100 p-2 rounded-lg mr-4">
+                            <Clock className="w-5 h-5 text-amber-500" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-amber-800 mb-1">Pending Approval</h4>
+                            <p className="text-amber-700">This vendor profile is awaiting approval. It will be able to receive requests once approved.</p>
+                          </div>
                         </div>
                       </div>
                     )}

@@ -7,8 +7,11 @@ import {
   LuUsers, 
   LuShield
 } from "react-icons/lu";
+import { useNavigate } from 'react-router-dom';
 
 const AdminHomePage = () => {
+
+  const navigate = useNavigate()
   const adminStats = [
     { title: "Active Users", value: "1,457", icon: <LuUsers />, color: "bg-blue-500" },
     { title: "Waste Collected", value: "24.6 tons", icon: <LuShield />, color: "bg-emerald-500" },
@@ -46,6 +49,7 @@ const AdminHomePage = () => {
               
               <div className="flex justify-center mb-6">
                 <button 
+                  onClick={() => {navigate('/admin-give-rewards')}}
                   className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-lg transition-all duration-300 py-4 px-6 flex items-center justify-center text-lg font-semibold w-full md:w-3/4 mx-auto"
                 >
                   <LuTicket className="w-6 h-6 mr-3" />

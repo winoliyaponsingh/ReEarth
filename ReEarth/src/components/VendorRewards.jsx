@@ -1,7 +1,8 @@
 import React from 'react';
 import { Award, Download, Leaf, TreePine } from 'lucide-react';
+import Navbar from './Navbar';
 
-export function VendorRewards({ 
+export default function VendorRewards({ 
   certificateData = { weight: "0.0", id: "ECO-0000-0000" },
   vendorName = "EcoRewards",
   title = "Certificate of Achievement",
@@ -13,8 +14,9 @@ export function VendorRewards({
   onDownload = () => console.log("Download requested")
 }) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100 flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100 flex-col items-center justify-center">
+      <Navbar />
+      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6 m-5">
         <div className="flex items-center justify-center space-x-2 text-green-600">
           <TreePine size={32} />
           <h1 className="text-3xl font-bold">{vendorName}</h1>
