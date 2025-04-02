@@ -19,14 +19,16 @@ const Navbar = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <div className="flex items-center">
+            <div className="flex items-center"
+            
+            onClick={()=> navigate('/')}>
               <RiRecycleLine className="text-3xl text-[rgb(13,184,117)]" />
               <span className="text-2xl font-bold">Re</span>
               <span className="text-2xl font-bold">Earth</span>
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-2">
+            <div className="hidden md:flex items-center space-x-2" onClick={()=> navigate('/')}>
               <button className="cursor-pointer h-8 px-5 rounded-xl bg-[rgb(13,184,117)] text-white hover:bg-[rgb(11,156,99)] transition">
                 Home
               </button>
