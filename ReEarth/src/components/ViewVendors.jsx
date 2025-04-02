@@ -125,6 +125,7 @@ export function ViewVendors() {
 
           <div className="flex items-center space-x-2 text-gray-600">
             <Mail className="w-5 h-5 text-emerald-500" />
+  
             <span>{vendor.email}</span>
           </div>
 
