@@ -2,8 +2,10 @@ import React from "react";
 import MainPagePic from "../assets/waste.png";
 import { LuLeaf, LuHandshake, LuUsers, LuShield } from "react-icons/lu";
 import Navbar from "./Navbar";
+import { useNavigate } from "react-router-dom";
 
 const NGOHomePage = () => {
+  const navigate= useNavigate();
   const ngoStats = [
     { title: "Waste Recycled", value: "18.3 tons", icon: <LuLeaf />, color: "bg-emerald-500" },
     { title: "Partner Organizations", value: "42", icon: <LuHandshake />, color: "bg-green-500" },
@@ -30,7 +32,9 @@ const NGOHomePage = () => {
               </p>
               
               <div className="flex justify-center mb-8">
-                <button className="bg-emerald-600 hover:bg-gray-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 px-8 py-4 text-xl font-semibold flex items-center">
+                <button 
+                  onClick={() => navigate('/ngo-upload-profile')}
+                className="bg-emerald-600 hover:bg-gray-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 px-8 py-4 text-xl font-semibold flex items-center">
                   <LuShield className="w-6 h-6 mr-2" />
                   Create Profile
                 </button>

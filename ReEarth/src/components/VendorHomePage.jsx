@@ -9,31 +9,37 @@ import {
   LuTruck,
 } from "react-icons/lu";
 import Navbar from "./Navbar";
+import { useNavigate } from "react-router-dom";
 
 const VendorHomePage = () => {
+  const navigate = useNavigate();
   const vendorActions = [
     {
       title: "Create Profile",
       icon: <LuUserPlus className="w-6 h-6" />,
       description: "Set up your collection services and business information",
+      route : "/vendor-upload-profile",
       color: "bg-emerald-600",
     },
     {
       title: "View Trash",
       icon: <LuTrash2 className="w-6 h-6" />,
       description: "Browse available waste for collection in your area",
+      route : "/vendor-view-trash",
       color: "bg-green-600",
     },
     {
       title: "View Transactions",
       icon: <LuHistory className="w-6 h-6" />,
       description: "Track your collection history and payments",
+      route : "/vendor-view-transactions",
       color: "bg-teal-600",
     },
     {
       title: "Rewards",
       icon: <LuAward className="w-6 h-6" />,
       description: "Check your earned incentives and certifications",
+      route : "/vendor-view-rewards",
       color: "bg-emerald-600",
     },
   ];
@@ -99,6 +105,7 @@ const VendorHomePage = () => {
                 {vendorActions.map((button, index) => (
                   <button
                     key={index}
+                    onClick={() => {navigate(button.route)}}
                     className={`${button.color} hover:bg-gray-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-4 flex flex-col h-full`}
                   >
                     <div className="flex items-center mb-2">

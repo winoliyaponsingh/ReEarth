@@ -1,38 +1,46 @@
 import React from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 import MainPagePic from "../assets/waste.png";
 import { LuLeaf, LuUpload, LuStore, LuHistory, LuAward, LuHandshake } from "react-icons/lu";
 import Navbar from "./Navbar";
 
 const UserHomePage = () => {
+  const navigate = useNavigate(); // Use the navigate hook
+
   const actionButtons = [
     {
       title: "Upload Trash",
       icon: <LuUpload className="w-6 h-6" />,
       description: "Submit details about your recyclable waste for collection",
+      navigate: "/user-upload-trash",
       color: "bg-emerald-600",
     },
     {
       title: "View Vendors",
       icon: <LuStore className="w-6 h-6" />,
       description: "Connect with local recycling vendors and services",
+      navigate: "/user-view-vendors",
       color: "bg-green-600",
     },
     {
       title: "View Transactions",
       icon: <LuHistory className="w-6 h-6" />,
       description: "Track your recycling history and payments",
+      navigate: "/user-transactions", // Adding a route for transactions
       color: "bg-teal-600",
     },
     {
       title: "Rewards",
       icon: <LuAward className="w-6 h-6" />,
       description: "Check your earned points and available rewards",
+      navigate: "/user-rewards", // Adding a route for rewards
       color: "bg-emerald-600",
     },
     {
       title: "NGO Collaborations",
       icon: <LuHandshake className="w-6 h-6" />,
       description: "Partner with environmental organizations",
+      navigate: "/user-ngo-collaborations", // Adding a route for NGO collaborations
       color: "bg-green-600",
     }
   ];
@@ -60,6 +68,7 @@ const UserHomePage = () => {
                 {actionButtons.map((button, index) => (
                   <button 
                     key={index}
+                    onClick={() => navigate(button.navigate)} // Correct navigation handling
                     className={`${button.color} hover:bg-gray-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-4 flex flex-col h-full`}
                   >
                     <div className="flex items-center mb-2">
