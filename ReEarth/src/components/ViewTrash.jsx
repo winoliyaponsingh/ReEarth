@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User, Mail, Recycle, Weight, MapPin, Truck, Image as ImageIcon, Building2, X } from 'lucide-react';
-import Navbar from './Navbar'
+import Navbar from './Navbar';
 
 function ViewTrash() {
   const [showForm, setShowForm] = useState(false);
@@ -12,16 +12,42 @@ function ViewTrash() {
     collectionMethod: 'pickup',
   });
 
-  const sampleWaste = {
-    name: "John Doe",
-    email: "john@example.com",
-    wasteCategory: "Recyclable",
-    wasteType: "Electronic Waste",
-    wasteWeight: 5.2,
-    location: "123 Green Street, Eco City",
-    collectionMethod: "scheduled pickup",
-    wasteImage: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80"
-  };
+  // Sample waste data array with 3 items for demonstration
+  const sampleWastes = [
+    {
+      id: 1,
+      name: "John Doe",
+      email: "john@example.com",
+      wasteCategory: "Recyclable",
+      wasteType: "Electronic Waste",
+      wasteWeight: 5.2,
+      location: "123 Green Street, Eco City",
+      collectionMethod: "scheduled pickup",
+      wasteImage: "/api/placeholder/400/250"
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      email: "jane@example.com",
+      wasteCategory: "Compostable",
+      wasteType: "Organic",
+      wasteWeight: 3.5,
+      location: "456 Leaf Avenue, Green Town",
+      collectionMethod: "drop off",
+      wasteImage: "/api/placeholder/400/250"
+    },
+    {
+      id: 3,
+      name: "Alex Johnson",
+      email: "alex@example.com",
+      wasteCategory: "Hazardous",
+      wasteType: "Chemical",
+      wasteWeight: 2.7,
+      location: "789 Pine Road, Eco Village",
+      collectionMethod: "scheduled pickup",
+      wasteImage: "/api/placeholder/400/250"
+    }
+  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -31,87 +57,100 @@ function ViewTrash() {
     setShowForm(false);
   };
 
+  // Function to get waste category color
+  const getCategoryColor = (category) => {
+    switch (category.toLowerCase()) {
+      case 'recyclable': return 'bg-emerald-600';
+      case 'compostable': return 'bg-green-600';
+      case 'hazardous': return 'bg-amber-600';
+      default: return 'bg-teal-600';
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 ">
-        <Navbar />
-      <div className="max-w-2xl  mx-5 my-5 flex items-center justify-center">
-        {/* <h1 className="text-3xl font-bold text-gray-800 mb-8">Waste Management System</h1> */}
-        
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="p-6 bg-blue-50">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center space-x-3">
-                <User className="w-6 h-6 text-emerald-600" />
-                <h3 className="text-xl font-bold text-gray-800">{sampleWaste.name}</h3>
-              </div>
-              <span className="px-3 py-1 bg-emerald-600 text-white text-sm rounded-full">
-                {sampleWaste.wasteCategory}
-              </span>
-            </div>
-          </div>
-          
-          <div className="p-6 space-y-4">
-            <div className="flex items-center space-x-2 text-gray-600">
-              <Mail className="w-5 h-5 text-emerald-600" />
-              <span>{sampleWaste.email}</span>
-            </div>
-
-            <div className="flex items-center space-x-2 text-gray-600">
-              <Recycle className="w-5 h-5 text-emerald-600" />
-              <div>
-                <p className="font-semibold">Waste Type:</p>
-                <p>{sampleWaste.wasteType}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2 text-gray-600">
-              <Weight className="w-5 h-5 text-emerald-600" />
-              <span>{sampleWaste.wasteWeight} kg</span>
-            </div>
-
-            <div className="flex items-center space-x-2 text-gray-600">
-              <MapPin className="w-5 h-5 text-emerald-600" />
-              <span>{sampleWaste.location}</span>
-            </div>
-
-            <div className="flex items-center space-x-2 text-gray-600">
-              <Truck className="w-5 h-5 text-emerald-600" />
-              <span className="capitalize">{sampleWaste.collectionMethod}</span>
-            </div>
-
-            <div className="pt-4 border-t">
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <ImageIcon className="w-5 h-5 text-emerald-600" />
-                  <span className="font-semibold">Waste Image</span>
+    <div className="min-h-screen bg-green-50">
+      <Navbar />
+      
+      <div className="container mx-auto px-4 py-8">        
+        {/* 3-column grid layout for waste cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {sampleWastes.map((waste) => (
+            <div key={waste.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+              <div className="p-5 bg-green-100">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center space-x-3">
+                    <User className="w-6 h-6 text-emerald-600" />
+                    <h3 className="text-xl font-bold text-gray-800">{waste.name}</h3>
+                  </div>
+                  <span className={`px-3 py-1 ${getCategoryColor(waste.wasteCategory)} text-white text-sm rounded-full`}>
+                    {waste.wasteCategory}
+                  </span>
                 </div>
-                <img
-                  src={sampleWaste.wasteImage}
-                  alt="Waste"
-                  className="w-full h-48 object-cover rounded-lg"
-                />
+              </div>
+              
+              <div className="p-5 space-y-3">
+                <div className="flex items-center space-x-2 text-gray-600">
+                  <Mail className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                  <span className="truncate">{waste.email}</span>
+                </div>
+
+                <div className="flex items-start space-x-2 text-gray-600">
+                  <Recycle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <p className="font-semibold">Waste Type:</p>
+                    <p>{waste.wasteType}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2 text-gray-600">
+                  <Weight className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                  <span>{waste.wasteWeight} kg</span>
+                </div>
+
+                <div className="flex items-center space-x-2 text-gray-600">
+                  <MapPin className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                  <span className="truncate">{waste.location}</span>
+                </div>
+
+                <div className="flex items-center space-x-2 text-gray-600">
+                  <Truck className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                  <span className="capitalize">{waste.collectionMethod}</span>
+                </div>
+
+                <div className="pt-3 border-t border-green-100">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2 text-gray-600">
+                      <ImageIcon className="w-5 h-5 text-emerald-600" />
+                      <span className="font-semibold">Waste Image</span>
+                    </div>
+                    <img
+                      src={waste.wasteImage}
+                      alt="Waste"
+                      className="w-full h-40 object-cover rounded-lg"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-green-100">
+                  <button
+                    onClick={() => setShowForm(true)}
+                    className="w-full py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200 flex items-center justify-center space-x-2"
+                  >
+                    <Truck className="w-5 h-5" />
+                    <span>Send Request</span>
+                  </button>
+                </div>
               </div>
             </div>
-
-            <div className="pt-4 border-t">
-              <button
-                onClick={() => setShowForm(true)}
-                className="w-full py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200 flex items-center justify-center space-x-2"
-              >
-                <Truck className="w-5 h-5" />
-                <span>Send Request</span>
-              </button>
-            </div>
-          </div>
+          ))}
         </div>
 
-        
-
+        {/* Modal Form */}
         {showForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
               <div className="p-6 bg-emerald-100 relative">
-                <h2 className="text-2xl font-bold text-gray-800">Waste Collection Request</h2>
+                <h2 className="text-2xl font-bold text-emerald-800">Waste Collection Request</h2>
                 <button
                   onClick={() => setShowForm(false)}
                   className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
@@ -167,6 +206,7 @@ function ViewTrash() {
                     <option value="Metal">Metal</option>
                     <option value="Glass">Glass</option>
                     <option value="Organic">Organic</option>
+                    <option value="Chemical">Chemical</option>
                   </select>
                 </div>
 

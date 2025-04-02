@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { UserCircle2, Building2, Users, Heart } from 'lucide-react';
 import Navbar from './Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const JoinUs = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [role, setRole] = useState('user');
+  const navigate = useNavigate();
+
 
   return (
     <>
@@ -103,6 +106,19 @@ const JoinUs = () => {
 
             <button
               type="submit"
+              onClick={() => {
+                if(role == 'user') {
+                  navigate('/user-home')
+                } else if(role == 'admin'){
+                  navigate('/admin-home')
+                }
+                else if(role == 'ngo'){
+                  navigate('/ngo-home')
+                }
+                else if(role == 'vendor'){
+                  navigate('/vendor-home')
+                }
+              }}
               className="w-full font-bold text-lime-200 bg-gray-900 h-12 rounded-xl cursor-pointer mt-6"
             >
               {isLogin ? 'Sign In' : 'Create Account'}

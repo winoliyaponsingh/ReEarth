@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { RiRecycleLine, RiMenu3Line, RiCloseLine } from "react-icons/ri";
 import { PiDotOutlineFill } from "react-icons/pi";
+import { useNavigate } from 'react-router-dom';
+
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -30,20 +33,26 @@ const Navbar = () => {
               
               <PiDotOutlineFill className='h-8 text-[rgb(172,215,156)]' />
               
-              <button className="cursor-pointer h-8 px-5 border border-gray-300 rounded-xl hover:border-gray-700 transition">
+              <button className="cursor-pointer h-8 px-5 border border-gray-300 rounded-xl hover:border-gray-700 transition"
+                onClick={() => navigate('/join-us')}
+              >
                 Join ReEarth Now
               </button>
 
               <PiDotOutlineFill className='h-8 text-[rgb(172,215,156)]' />
               
-              <button className="cursor-pointer h-8 px-5 border border-gray-300 rounded-xl hover:border-gray-700 transition">
+              <button
+                onClick={() => { navigate('/waste-analyser')}}
+                className="cursor-pointer h-8 px-5 border border-gray-300 rounded-xl hover:border-gray-700 transition">
                 Discover Waste Insights
               </button>
             </div>
 
             {/* Contact button for medium screens and up */}
             <div className="hidden md:block">
-              <button className="cursor-pointer w-32 h-8 bg-black text-white font-medium rounded-lg transition duration-500 ease-in-out hover:scale-105">
+              <button 
+                onClick={() => { navigate('/contact')}}
+                className="cursor-pointer w-32 h-8 bg-black text-white font-medium rounded-lg transition duration-500 ease-in-out hover:scale-105">
                 Contact us
               </button>
             </div>

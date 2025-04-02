@@ -19,6 +19,7 @@ import ViewTrash from "./components/ViewTrash";
 
 
 
+
 const App = () => {
   return (
     <>
@@ -27,9 +28,17 @@ const App = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/admin-home" element={<AdminHomePage />} />
+          <Route path="/ngo-home" element={<NGOHomePage />} />
+          <Route path="/vendor-home" element={<VendorHomePage />} />
           <Route path="/join-us" element={<JoinUs />} />
           <Route path="/waste-analyser" element={<ImageAnalyzer />} />
           <Route path="/view-vendors" element={<ViewVendors />} />
+          <Route path="/view-trash" element={<ViewTrash />} />
+          <Route path="/user-home" element={<UserHomePage />} />
+          <Route path="/join-us" element={<JoinUs />} />
+
+
+
         </Routes>
       </Router>
     </>
