@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building2, Mail, Users, MapPin, Heart, Link as LinkIcon, Package, ExternalLink } from 'lucide-react';
+import { Building2, Mail, Users, MapPin, Link as LinkIcon, Package, ExternalLink } from 'lucide-react';
 
 function ViewNGO() {
   const [showVolunteerForm, setShowVolunteerForm] = useState(false);
@@ -30,8 +30,7 @@ function ViewNGO() {
       "Office Supplies",
       "Transportation"
     ],
-    resourceFormLink: "https://forms.greenearthfoundation.org/donate",
-    image: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&q=80"
+    resourceFormLink: "https://forms.greenearthfoundation.org/donate"
   };
 
   const handleSubmit = (e) => {
@@ -45,8 +44,6 @@ function ViewNGO() {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">NGO Directory</h1>
-        
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="p-6 bg-green-50">
             <div className="flex items-start justify-between">
@@ -61,12 +58,6 @@ function ViewNGO() {
           </div>
           
           <div className="p-6 space-y-4">
-            <img
-              src={sampleNGO.image}
-              alt="NGO"
-              className="w-full h-48 object-cover rounded-lg mb-4"
-            />
-
             <div className="flex items-center space-x-2 text-gray-600">
               <Mail className="w-5 h-5 text-green-600" />
               <span>{sampleNGO.email}</span>
@@ -119,23 +110,6 @@ function ViewNGO() {
                 <span>Resource Donation Form</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
-            </div>
-
-            <div className="flex space-x-4 pt-4 border-t">
-              <button
-                onClick={() => setShowVolunteerForm(true)}
-                className="flex-1 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center justify-center space-x-2"
-              >
-                <Heart className="w-5 h-5" />
-                <span>Volunteer Now</span>
-              </button>
-              <button
-                onClick={() => setShowResourceForm(true)}
-                className="flex-1 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center justify-center space-x-2"
-              >
-                <Package className="w-5 h-5" />
-                <span>Donate Resources</span>
-              </button>
             </div>
           </div>
         </div>
@@ -199,7 +173,7 @@ function ViewNGO() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent"
                     value={formData.skills}
                     onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-                    rows="3"
+                    rows={3}
                     placeholder="List your relevant skills..."
                   />
                 </div>
@@ -211,7 +185,7 @@ function ViewNGO() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent"
                     value={formData.interests}
                     onChange={(e) => setFormData({ ...formData, interests: e.target.value })}
-                    rows="3"
+                    rows={3}
                     placeholder="What areas are you interested in volunteering for?"
                   />
                 </div>
@@ -290,7 +264,7 @@ function ViewNGO() {
                   <label className="font-semibold text-gray-700">Additional Notes</label>
                   <textarea
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                    rows="3"
+                    rows={3}
                     placeholder="Any additional information about the resources..."
                   />
                 </div>
@@ -319,4 +293,4 @@ function ViewNGO() {
   );
 }
 
-export default App;
+export default ViewNGO;

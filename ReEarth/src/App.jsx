@@ -16,6 +16,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ImageAnalyzer from "./components/ImageAnalyser";
 import ViewTrash from "./components/ViewTrash";
+import ViewNGO from "./components/ViewNGO";
 
 
 
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/waste-analyser" element={<ImageAnalyzer />} />
           <Route path="/user-home" element={<UserHomePage />} />
           <Route path="/join-us" element={<JoinUs />} />
+          <Route path="/user-view-ngo" element={<ViewNGO />} />
           <Route path="/user-upload-trash" element={<UserUploadTrash />} />
           <Route path="/user-view-vendors" element={<ViewVendors />} />
           <Route path="/vendor-upload-profile" element={<VendorUploadProfile />} />
