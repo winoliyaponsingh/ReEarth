@@ -10,7 +10,7 @@ function UserViewTransactions() {
   const [error, setError] = useState(null);
   
   // Fixed email for now - will be replaced with dynamic auth user email later
-  const userEmail = "test@gmail.com";
+  const userEmail = localStorage.getItem('email');
 
 
   const formatTimestamp = (timestamp) => {

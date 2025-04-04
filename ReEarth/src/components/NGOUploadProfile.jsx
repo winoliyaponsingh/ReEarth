@@ -12,7 +12,7 @@ export function NGOUploadProfile() {
     ngoName: '',
     ngoType: '',
     location: '',
-    email: '',
+    email: localStorage.getItem('email'),
     volunteeringOpportunities: [],
     resourceNeeds: [],
     volunteerFormLink: '',
@@ -227,8 +227,8 @@ export function NGOUploadProfile() {
                           className="w-full px-4 py-2 pl-10 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgb(13,184,117)] focus:border-transparent"
                           value={formData.email}
                           onChange={(e) => setFormData({...formData, email: e.target.value})}
-                          placeholder="contact@organization.org"
-                          required
+                          placeholder={localStorage.getItem('email')}
+                          disabled
                         />
                         <Mail className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
                       </div>
