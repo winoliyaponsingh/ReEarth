@@ -41,11 +41,14 @@ function ViewTrash() {
     fetchWasteData();
   }, []);
 
+  // console.log(localStorage.getItem('email'));
+
   const handleUpdateStatus = async (itemId, newStatus) => {
     try {
       const wasteDocRef = doc(db, "UserUploadTrash", itemId);
       await updateDoc(wasteDocRef, {
-        status: newStatus
+        status: newStatus,
+        vendorEmail: localStorage.getItem('email')
       });
       
       // Update local state to reflect the change

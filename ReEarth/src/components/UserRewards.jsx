@@ -6,14 +6,14 @@ import jsPDF from 'jspdf';
 import Navbar from './Navbar';
 
 export default function UserRewards({ 
-  vendorName = "EcoRewards",
+  vendorName = "ReEarth Rewards",
   title = "Certificate of Achievement",
   subtitle = "for Environmental Contribution",
   message = "Thank you for contributing to a cleaner environment",
   metricLabel = "Waste Donated",
   metricUnit = "kg",
   downloadLabel = "Download Certificate",
-  userEmail = "test@gmail.com" // Pass the user email as a prop or get it from your auth context
+  userEmail = localStorage.getItem('email') // Pass the user email as a prop or get it from your auth context
 }) {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -92,7 +92,7 @@ export default function UserRewards({
     doc.text(new Date().toLocaleDateString(), 105, 140, { align: "center" });
     
     // Save the PDF
-    doc.save(`EcoRewards_Certificate_${userData.id || 'certificate'}.pdf`);
+    doc.save(`ReEarth Rewards_Certificate_${userData.id || 'certificate'}.pdf`);
   };
 
   // Generate a random string for certificate ID if needed

@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { Building2, MapPin, Mail, GraduationCap, Heart, Leaf, Trash2, Users, CheckCircle } from 'lucide-react';
 import Navbar from './Navbar';
 
+import {  collection, addDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
+
+
+
 export function NGOUploadProfile() {
   const [formData, setFormData] = useState({
     ngoName: '',
@@ -13,10 +18,12 @@ export function NGOUploadProfile() {
     volunteerFormLink: '',
     customResourceNeed: '',
     resourceFormLink: '',
+    createdAt: new Date(),
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const handleVolunteeringChange = (opportunity) => {
     setFormData(prev => ({
@@ -36,14 +43,29 @@ export function NGOUploadProfile() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(null);
     
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
-      setIsSubmitting(false);
+    try {
+      // Prepare data for submission
+      const dataToSubmit = {
+        ...formData,
+        // Add customResourceNeed to resourceNeeds array if it's not empty
+        resourceNeeds: formData.customResourceNeed 
+          ? [...formData.resourceNeeds, formData.customResourceNeed]
+          : formData.resourceNeeds,
+        createdAt: new Date()
+      };
+      
+      // Remove the customResourceNeed field since we've incorporated it into resourceNeeds
+      delete dataToSubmit.customResourceNeed;
+      
+      // Add the document to Firestore
+      const docRef = await addDoc(collection(db, "NGOProfiles"), dataToSubmit);
+      
+      console.log("Document written with ID: ", docRef.id);
       setSubmitSuccess(true);
       
       // Reset form after 3 seconds
@@ -59,9 +81,15 @@ export function NGOUploadProfile() {
           volunteerFormLink: '',
           customResourceNeed: '',
           resourceFormLink: '',
+          createdAt: new Date(),
         });
       }, 3000);
-    }, 1500);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      setSubmitError("Failed to submit form. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -147,6 +175,12 @@ export function NGOUploadProfile() {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <h2 className="text-2xl font-bold text-gray-800 mb-6">NGO Profile Registration</h2>
+                  
+                  {submitError && (
+                    <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+                      {submitError}
+                    </div>
+                  )}
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* NGO Name Field */}

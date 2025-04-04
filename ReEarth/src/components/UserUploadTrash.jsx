@@ -67,7 +67,7 @@ export function UserUploadTrash() {
       // Create a new form data object with the image URL
       const wasteData = {
         name: formData.name,
-        email: formData.email,
+        email: localStorage.getItem('email'),
         wasteType: formData.wasteType,
         wasteCategory: formData.wasteCategory,
         weight: formData.weight,
@@ -208,8 +208,8 @@ export function UserUploadTrash() {
                         className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        required
-                        placeholder="example@email.com"
+                        disabled
+                        placeholder= {localStorage.getItem('email')}
                       />
                     </div>
                     

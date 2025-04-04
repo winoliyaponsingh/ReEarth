@@ -39,7 +39,7 @@ const VendorHomePage = () => {
       title: "Rewards",
       icon: <LuAward className="w-6 h-6" />,
       description: "Check your earned incentives and certifications",
-      route : "/vendor-view-rewards",
+      route : "/vendor-rewards",
       color: "bg-emerald-600",
     },
   ];

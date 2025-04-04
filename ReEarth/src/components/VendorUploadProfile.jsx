@@ -10,7 +10,7 @@ export function VendorUploadProfile() {
     businessType: '',
     wasteTypes: [],
     location: '',
-    email: '',
+    vendorEmail: localStorage.getItem('email'), // updated to use localStorage
     phone: '',
     description: '',
     collectionMethod: ''
@@ -48,7 +48,7 @@ export function VendorUploadProfile() {
         status: 'pending', // Set initial status as pending
         createdAt: new Date(),
         rating: 0,
-        successRate: '0%',
+        successRate: '90%',
         requests: [] // Initialize empty requests array
       };
       
@@ -66,7 +66,7 @@ export function VendorUploadProfile() {
           businessType: '',
           wasteTypes: [],
           location: '',
-          email: '',
+          vendorEmail: localStorage.getItem('email'), // updated to use localStorage
           phone: '',
           description: '',
           collectionMethod: ''
@@ -208,10 +208,9 @@ export function VendorUploadProfile() {
                         <input
                           type="email"
                           className="w-full px-4 py-2 pl-10 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                          value={formData.email}
-                          onChange={(e) => setFormData({...formData, email: e.target.value})}
-                          placeholder="contact@business.com"
-                          required
+                          value={formData.vendorEmail}
+                          placeholder={formData.vendorEmail}
+                          disabled
                         />
                         <Mail className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
                       </div>

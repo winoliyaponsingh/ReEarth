@@ -1,291 +1,167 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Building2, Mail, Users, MapPin, Link as LinkIcon, Package, ExternalLink } from 'lucide-react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase'; // Adjust the import path to your Firebase config
+import Navbar from './Navbar';
 
 function ViewNGO() {
-  const [showVolunteerForm, setShowVolunteerForm] = useState(false);
-  const [showResourceForm, setShowResourceForm] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    availability: '',
-    skills: '',
-    interests: '',
-  });
+  const [ngos, setNgos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const sampleNGO = {
-    name: "Green Earth Foundation",
-    ngoType: "Environmental Conservation",
-    location: "456 Earth Avenue, Green City",
-    email: "contact@greenearthfoundation.org",
-    volunteerOpportunities: [
-      "Tree Planting Drive",
-      "Beach Cleanup",
-      "Environmental Education",
-      "Community Outreach"
-    ],
-    volunteerFormLink: "https://forms.greenearthfoundation.org/volunteer",
-    resourcesNeeded: [
-      "Gardening Tools",
-      "Educational Materials",
-      "Office Supplies",
-      "Transportation"
-    ],
-    resourceFormLink: "https://forms.greenearthfoundation.org/donate"
-  };
+  useEffect(() => {
+    const fetchNGOs = async () => {
+      try {
+        setLoading(true);
+        const ngoCollectionRef = collection(db, 'NGOProfiles');
+        const querySnapshot = await getDocs(ngoCollectionRef);
+        
+        const ngoData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        setNgos(ngoData);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching NGO data:", err);
+        setError("Failed to load NGO profiles. Please try again later.");
+        setLoading(false);
+      }
+    };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Request submitted successfully!');
-    setShowVolunteerForm(false);
-    setShowResourceForm(false);
-  };
+    fetchNGOs();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center p-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading NGO profiles...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center p-8 bg-white rounded-xl shadow-lg max-w-md">
+          <div className="text-red-500 text-5xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error</h2>
+          <p className="text-gray-600">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-6 bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-lg transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="p-6 bg-green-50">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center space-x-3">
-                <Building2 className="w-6 h-6 text-green-600" />
-                <h3 className="text-xl font-bold text-gray-800">{sampleNGO.name}</h3>
-              </div>
-              <span className="px-3 py-1 bg-green-600 text-white text-sm rounded-full">
-                {sampleNGO.ngoType}
-              </span>
-            </div>
-          </div>
-          
-          <div className="p-6 space-y-4">
-            <div className="flex items-center space-x-2 text-gray-600">
-              <Mail className="w-5 h-5 text-green-600" />
-              <span>{sampleNGO.email}</span>
-            </div>
-
-            <div className="flex items-center space-x-2 text-gray-600">
-              <MapPin className="w-5 h-5 text-green-600" />
-              <span>{sampleNGO.location}</span>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-gray-600">
-                <Users className="w-5 h-5 text-green-600" />
-                <span className="font-semibold">Volunteer Opportunities</span>
-              </div>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                {sampleNGO.volunteerOpportunities.map((opportunity, index) => (
-                  <li key={index} className="text-gray-600">{opportunity}</li>
-                ))}
-              </ul>
-              <a
-                href={sampleNGO.volunteerFormLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center space-x-2 text-green-600 hover:text-green-700 mt-2"
-              >
-                <LinkIcon className="w-4 h-4" />
-                <span>Volunteer Application Form</span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-gray-600">
-                <Package className="w-5 h-5 text-green-600" />
-                <span className="font-semibold">Resources Needed</span>
-              </div>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                {sampleNGO.resourcesNeeded.map((resource, index) => (
-                  <li key={index} className="text-gray-600">{resource}</li>
-                ))}
-              </ul>
-              <a
-                href={sampleNGO.resourceFormLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center space-x-2 text-green-600 hover:text-green-700 mt-2"
-              >
-                <LinkIcon className="w-4 h-4" />
-                <span>Resource Donation Form</span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-100">
+      <Navbar />
+      
+      <div className="py-8 px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Nonprofit Organizations</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Discover nonprofit organizations that are making a difference. Connect with them to volunteer your time or donate resources.
+          </p>
         </div>
-
-        {/* Volunteer Form Modal */}
-        {showVolunteerForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-              <div className="p-6 bg-green-100 relative">
-                <h2 className="text-2xl font-bold text-gray-800">Volunteer Application</h2>
-                <button
-                  onClick={() => setShowVolunteerForm(false)}
-                  className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
-                >
-                  <ExternalLink className="w-5 h-5" />
-                </button>
-              </div>
-              
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                <div className="space-y-2">
-                  <label className="font-semibold text-gray-700">Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="font-semibold text-gray-700">Email</label>
-                  <input
-                    type="email"
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="font-semibold text-gray-700">Availability</label>
-                  <select
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                    value={formData.availability}
-                    onChange={(e) => setFormData({ ...formData, availability: e.target.value })}
-                  >
-                    <option value="">Select availability</option>
-                    <option value="weekdays">Weekdays</option>
-                    <option value="weekends">Weekends</option>
-                    <option value="both">Both</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="font-semibold text-gray-700">Skills</label>
-                  <textarea
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                    value={formData.skills}
-                    onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-                    rows={3}
-                    placeholder="List your relevant skills..."
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="font-semibold text-gray-700">Areas of Interest</label>
-                  <textarea
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                    value={formData.interests}
-                    onChange={(e) => setFormData({ ...formData, interests: e.target.value })}
-                    rows={3}
-                    placeholder="What areas are you interested in volunteering for?"
-                  />
-                </div>
-
-                <div className="flex space-x-3 pt-4">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Submit Application
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowVolunteerForm(false)}
-                    className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
+        
+        {ngos.length === 0 ? (
+          <div className="text-center p-8 bg-white rounded-xl shadow-lg max-w-md mx-auto">
+            <h2 className="text-xl font-medium text-gray-800 mb-2">No NGOs Found</h2>
+            <p className="text-gray-600">There are currently no nonprofit organizations in our database.</p>
           </div>
-        )}
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            {ngos.map((ngo) => (
+              <div 
+                key={ngo.id} 
+                className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-xl hover:-translate-y-1"
+              >
+                <div className="p-6 bg-green-50">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Building2 className="w-6 h-6 text-green-600" />
+                      <h3 className="text-xl font-bold text-gray-800">{ngo.ngoName}</h3>
+                    </div>
+                    <span className="px-3 py-1 bg-green-600 text-white text-sm rounded-full font-medium">
+                      {ngo.ngoType}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="p-6 space-y-4">
+                  <div className="flex items-center space-x-2 text-gray-600">
+                    <Mail className="w-5 h-5 text-green-600" />
+                    <span>{ngo.email}</span>
+                  </div>
 
-        {/* Resource Donation Form Modal */}
-        {showResourceForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-              <div className="p-6 bg-green-100 relative">
-                <h2 className="text-2xl font-bold text-gray-800">Resource Donation</h2>
-                <button
-                  onClick={() => setShowResourceForm(false)}
-                  className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
-                >
-                  <ExternalLink className="w-5 h-5" />
-                </button>
+                  <div className="flex items-center space-x-2 text-gray-600">
+                    <MapPin className="w-5 h-5 text-green-600" />
+                    <span>{ngo.location}</span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2 text-gray-600">
+                      <Users className="w-5 h-5 text-green-600" />
+                      <span className="font-semibold">Volunteer Opportunities</span>
+                    </div>
+                    <ul className="grid grid-cols-2 gap-2 mt-2">
+                      {ngo.volunteeringOpportunities && ngo.volunteeringOpportunities.slice(0, 4).map((opportunity, index) => (
+                        <li key={index} className="px-3 py-1 text-sm rounded-full border border-green-200 bg-green-50 text-gray-700">
+                          {opportunity}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2 text-gray-600">
+                      <Package className="w-5 h-5 text-green-600" />
+                      <span className="font-semibold">Resources Needed</span>
+                    </div>
+                    <ul className="grid grid-cols-2 gap-2 mt-2">
+                      {ngo.resourceNeeds && ngo.resourceNeeds.slice(0, 4).map((resource, index) => (
+                        <li key={index} className="px-3 py-1 text-sm rounded-full border border-green-200 bg-green-50 text-gray-700">
+                          {resource}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                    <a 
+                      href={ngo.volunteerFormLink}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+                    >
+                      <Users className="w-4 h-4" />
+                      <span>Volunteer</span>
+                      <ExternalLink className="w-4 h-4 ml-1" />
+                    </a>
+                    <a 
+                      href={ngo.resourceFormLink}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+                    >
+                      <Package className="w-4 h-4" />
+                      <span>Donate</span>
+                      <ExternalLink className="w-4 h-4 ml-1" />
+                    </a>
+                  </div>
+                </div>
               </div>
-              
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                <div className="space-y-2">
-                  <label className="font-semibold text-gray-700">Resource Type</label>
-                  <select
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                  >
-                    {sampleNGO.resourcesNeeded.map((resource, index) => (
-                      <option key={index} value={resource.toLowerCase()}>{resource}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="font-semibold text-gray-700">Quantity</label>
-                  <input
-                    type="number"
-                    required
-                    min="1"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="font-semibold text-gray-700">Condition</label>
-                  <select
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                  >
-                    <option value="new">New</option>
-                    <option value="like-new">Like New</option>
-                    <option value="good">Good</option>
-                    <option value="fair">Fair</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="font-semibold text-gray-700">Additional Notes</label>
-                  <textarea
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                    rows={3}
-                    placeholder="Any additional information about the resources..."
-                  />
-                </div>
-
-                <div className="flex space-x-3 pt-4">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Submit Donation
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowResourceForm(false)}
-                    className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
+            ))}
           </div>
         )}
       </div>
@@ -294,5 +170,3 @@ function ViewNGO() {
 }
 
 export default ViewNGO;
-
-// HELLO, ME IS SORRY FOR SAYING NO :(

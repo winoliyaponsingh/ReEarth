@@ -36,7 +36,7 @@ export function ViewVendors() {
             businessType: doc.data().businessType || doc.data().wasteType || "Recycling Center",
             wasteTypes: doc.data().wasteTypes || [doc.data().wasteType || "General"],
             location: doc.data().location || doc.data().address || "Unknown Location",
-            email: doc.data().email || "contact@example.com",
+            vendorEmail: doc.data().vendorEmail || "contact@example.com",
             collectionMethod: doc.data().collectionMethod || "drop-off",
             rating: doc.data().rating || 4.5,
             successRate: doc.data().successRate || "90%"
@@ -102,7 +102,7 @@ export function ViewVendors() {
       // 2. Create request object
       const requestData = {
         name: formData.get('name'),
-        email: formData.get('email'),
+        email: localStorage.getItem('email'), // changed to use email from localStorage
         wasteType: formData.get('wasteType'),
         weight: formData.get('weight'),
         photoURL: photoURL,
@@ -302,7 +302,7 @@ export function ViewVendors() {
 
                   <div className="flex items-center space-x-3 text-gray-700">
                     <Mail className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    <span className="text-sm">{vendor.email}</span>
+                    <span className="text-sm">{vendor.vendorEmail}</span>
                   </div>
 
                   <div className="pt-4 mt-2">
@@ -396,10 +396,10 @@ export function ViewVendors() {
                     type="email"
                     id="email"
                     name="email"
-                    required
+                    disabled
                     pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                     className="w-full px-3 py-2 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-transparent"
-                    placeholder="your.email@example.com"
+                    placeholder={localStorage.getItem('email')}
                   />
                 </div>
 

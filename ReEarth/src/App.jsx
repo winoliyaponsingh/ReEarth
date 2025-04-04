@@ -51,7 +51,7 @@ const App = () => {
           <Route path="/user-rewards" element={<UserRewards />} />
           <Route path="/vendor-rewards" element={<VendorRewards />} />
           <Route path="/admin-give-rewards" element={<AdminGiveReward />} />
-
+          <Route path="/user-ngo-collaborations" element={<ViewNGO />} />
 
 
         </Routes>

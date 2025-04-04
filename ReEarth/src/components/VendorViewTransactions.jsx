@@ -11,7 +11,7 @@ const VendorProfileView = () => {
   const [expandedItems, setExpandedItems] = useState({});
   
   // The email we want to filter by
-  const vendorEmail = "vendor@gmail.com";
+  const vendorEmail = localStorage.getItem('email');
 
   useEffect(() => {
     const fetchVendorData = async () => {
@@ -20,7 +20,7 @@ const VendorProfileView = () => {
         
         // Query the VendorUploadProfile collection where email matches
         const vendorCollectionRef = collection(db, "VendorUploadProfile");
-        const q = query(vendorCollectionRef, where("email", "==", vendorEmail));
+        const q = query(vendorCollectionRef, where("vendorEmail", "==", vendorEmail));
         
         const querySnapshot = await getDocs(q);
         
