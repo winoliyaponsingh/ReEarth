@@ -62,5 +62,5 @@ const App = () => {
 
 export default App;
 
-//rgb(13,184,117)-green
-//rgb(115,124,228)-blue
+//rgb(13,184,117)-green color
+//rgb(115,124,228)-blue color
