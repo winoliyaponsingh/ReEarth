@@ -78,9 +78,12 @@ const JoinUs = () => {
           createdAt: new Date()
         });
         
-        toast.success('Account created successfully!');
+        toast.success('Account created successfully! Redirecting...');
         storeUserData(role, email);
-        navigateToHome(role);
+        // Add 5 second delay before navigation for new accounts
+        setTimeout(() => {
+          navigateToHome(role);
+        }, 5000);
       }
     } catch (error) {
       console.error('Error during authentication:', error);
